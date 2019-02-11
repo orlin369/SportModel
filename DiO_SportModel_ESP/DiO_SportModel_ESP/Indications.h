@@ -15,6 +15,8 @@
 
 #include "DebugPort.h"
 
+#include "Notes.h"
+
 #pragma endregion
 
 
@@ -28,6 +30,7 @@ class IndicationsClass
 	void playNormalOperationMode();
 	void playConfigurationMode();
 	void playShutdown();
+	void playError();
 	void playConnectedToInet();
 	void playConnectedToService();
 	void playDisconnectedFromInet();

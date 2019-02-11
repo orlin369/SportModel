@@ -43,6 +43,11 @@ void IndicationsClass::playShutdown()
 	// TODO: Create song.
 }
 
+void IndicationsClass::playError()
+{
+	// TODO: Create song.
+}
+
 void IndicationsClass::playConnectedToInet()
 {
 	// TODO: Create song.

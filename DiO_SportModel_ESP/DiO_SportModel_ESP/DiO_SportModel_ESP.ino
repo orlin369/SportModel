@@ -146,6 +146,10 @@ void setup()
 		configure_to_sta();
 
 #ifdef ENABLE_CAYENNE_MODE
+		DEBUGLOG("CayenneUsername: %s\r\n", DeviceConfiguration.CayenneUsername.c_str());
+		DEBUGLOG("CayennePassword: %s\r\n", DeviceConfiguration.CayennePassword.c_str());
+		DEBUGLOG("CayenneClientID: %s\r\n", DeviceConfiguration.CayenneClientID.c_str());
+
 		Cayenne.begin(DeviceConfiguration.CayenneUsername.c_str(),
 			DeviceConfiguration.CayennePassword.c_str(),
 			DeviceConfiguration.CayenneClientID.c_str());
@@ -156,6 +160,8 @@ void setup()
 	{
 		Indications.playConfigurationMode();
 
+		configure_to_ap();
+		
 		LocalWebServer.configure(&SPIFFS);
 	}
 }
@@ -237,6 +243,71 @@ void configure_file_system()
 	}
 	DEBUGLOG("\r\n");
 #endif // RELEASE
+}
+
+#pragma endregion
+
+#pragma region AP mode
+
+/** @brief Configure WiFi module to access point.
+ *  @return Void.
+ */
+void configure_to_ap()
+{
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
+	// Register event handlers.
+	// Callback functions will be called as long as these handler objects exist.
+	// Call "handler_ap_mode_station_connected" each time a station connects
+	OnAPModeStationConnectedHandle_g = WiFi.onSoftAPModeStationConnected(&handler_ap_mode_station_connected);
+
+	// Call "handler_ap_mode_station_disconnected" each time a station disconnects
+	OnAPModeStationDisconnectedHandle_g = WiFi.onSoftAPModeStationDisconnected(&handler_ap_mode_station_disconnected);
+
+	// Set the host name.
+	WiFi.hostname(DeviceConfiguration.DeviceName.c_str());
+
+	// Set the mode.
+	WiFi.mode(WIFI_AP);
+
+	// NOTE: See description, this can be used as unique identification of the device.
+	String SSIDL = DeviceConfiguration.DeviceName + String(" ") + (String)ESP.getChipId();
+
+	// Create AP name.
+	DEBUGLOG("SSIDL: %s\r\n", SSIDL.c_str());
+
+	WiFi.softAP(SSIDL.c_str(), DeviceConfiguration.APPassword.c_str());
+	DEBUGLOG("APPassword: %s\r\n", DeviceConfiguration.APPassword.c_str());
+}
+
+/** @brief Handler that execute when client is connected.
+ *  @param const WiFiEventSoftAPModeStationConnected& evt, Callback handler
+ *  @return Void.
+ */
+void handler_ap_mode_station_connected(const WiFiEventSoftAPModeStationConnected& evt)
+{
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
+	DEBUGLOG("Station connected: %s\r\n", mac2str(evt.mac).c_str());
+	Indications.playConnectedToService();
+}
+
+/** @brief Handler that execute when client is disconnected.
+ *  @param const WiFiEventSoftAPModeStationDisconnected& evt, Callback handler
+ *  @return Void.
+ */
+void handler_ap_mode_station_disconnected(const WiFiEventSoftAPModeStationDisconnected& evt)
+{
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
+	DEBUGLOG("Station disconnected: %s\r\n", mac2str(evt.mac).c_str());
+	Indications.playDisconnectedFromService();
 }
 
 #pragma endregion
@@ -348,42 +419,57 @@ void handler_sta_mode_disconnected(WiFiEventStationModeDisconnected evt)
 
 #pragma endregion
 
+#pragma region Shutdown
+
 void shutdown()
 {
 	Indications.playShutdown();
 	ESP.deepSleep(40000);
 }
 
+#pragma endregion
+
 #pragma region Cayenne
 
 #ifdef ENABLE_CAYENNE_MODE
 
+/** @brief Handler that execute when the device is connected to Cayenne service.
+ *  @return Void.
+ */
 CAYENNE_CONNECTED()
 {
 	DEBUGLOG("\r\n");
 	DEBUGLOG(__PRETTY_FUNCTION__);
 	DEBUGLOG("\r\n");
 
+	DEBUGLOG("Conneted to Cayenne.\r\n");
 	Indications.playConnectedToService();
 }
 
+/** @brief Handler that execute when the device is disconnected from Cayenne service.
+ *  @return Void.
+ */
 CAYENNE_DISCONNECTED()
 {
 	DEBUGLOG("\r\n");
 	DEBUGLOG(__PRETTY_FUNCTION__);
 	DEBUGLOG("\r\n");
 
+	DEBUGLOG("Disconnected from Cayenne.\r\n");
 	Indications.playDisconnectedFromService();
 }
 
-// Default function for sending sensor data at intervals to Cayenne.
-// You can also use functions for specific channels, e.g CAYENNE_OUT(1) for sending channel 1 data.
+/** @brief Handler that execute when the device is sending data to the Cayenne service.
+ *  @note You can also use functions for specific channels, e.g CAYENNE_OUT(1) for sending channel 1 data.
+ *  @return Void.
+ */
 CAYENNE_OUT_DEFAULT()
 {
 	DEBUGLOG("\r\n");
 	DEBUGLOG(__PRETTY_FUNCTION__);
 	DEBUGLOG("\r\n");
 
+	DEBUGLOG("To Cayenne.\r\n");
 	// Write data to Cayenne here. This example just sends the current uptime in milliseconds on virtual channel 0.
 	Cayenne.virtualWrite(0, millis());
 	// Some examples of other functions you can use to send data.
@@ -392,15 +478,21 @@ CAYENNE_OUT_DEFAULT()
 	//Cayenne.virtualWrite(3, 50, TYPE_PROXIMITY, UNIT_CENTIMETER);
 }
 
-// Default function for processing actuator commands from the Cayenne Dashboard.
-// You can also use functions for specific channels, e.g CAYENNE_IN(1) for channel 1 commands.
+/** @brief Handler that execute when the device is recieving data from Cayenne service.
+ *  @param request Object that holds chanel and data.
+ *  @note You can also use functions for specific channels, e.g CAYENNE_IN(1) for channel 1 commands.
+ *  @return Void.
+ */
 CAYENNE_IN_DEFAULT()
 {
 	DEBUGLOG("\r\n");
 	DEBUGLOG(__PRETTY_FUNCTION__);
 	DEBUGLOG("\r\n");
 
+	DEBUGLOG("From Cayenne.\r\n");
 	DEBUGLOG("Channel %u, value %s", request.channel, getValue.asString());
+
+	
 	//Process message here.
 	// If there is an error set an error message using getValue.setError(),
 	// e.g getValue.setError("Error message");
