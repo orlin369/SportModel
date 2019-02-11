@@ -247,49 +247,134 @@ void LocalWebServerClass::serverInit() {
 
 #pragma endregion
 
-#pragma region Settings page API
+#pragma region Login Form
 
-	// Base settings root.
-	on("/settings", [this](AsyncWebServerRequest *request) {
-		if (!this->checkAuth(request))
-			return request->requestAuthentication();
-		if (!this->handleFileRead("/settings.html", request))
+	// login.html
+	on("/login", HTTP_GET, [this](AsyncWebServerRequest *request) {
+		DEBUGLOG("%s\r\n", request->url().c_str());
+		if (this->checkAuth(request))
+		{
+			request->redirect("/settings");
+			return;
+		}
+
+		if (!this->handleFileRead("/login.html", request))
+		{
 			request->send(404, "text/plain", "FileNotFound");
+			return;
+		}
 	});
 
-	// Setings.html
-	on("/settings.html", [this](AsyncWebServerRequest *request) {
-		if (!this->checkAuth(request))
-			return request->requestAuthentication();
-		this->saveConfiguration(request);
+	// login.html
+	on("/login", HTTP_POST, [this](AsyncWebServerRequest *request) {
+		DEBUGLOG("%s\r\n", request->url().c_str());
+		if (request->args() == 2)
+		{
+			// TODO: Check Username and Password.
+			if (request->hasArg("HTTPUsername") && 
+				request->hasArg("HTTPPassword"))
+			{
+				request->redirect("/settings");
+				return;
+			}
+			else
+			{
+				if (!this->handleFileRead("/login.html", request))
+				{
+					request->send(404, "text/plain", "FileNotFound");
+					return;
+				}
+			}
+		}
+		else
+		{
+			if (!this->handleFileRead("/login.html", request))
+			{
+				request->send(404, "text/plain", "FileNotFound");
+				return;
+			}
+		}
+
+		if (!this->handleFileRead("/login.html", request))
+		{
+			request->send(404, "text/plain", "FileNotFound");
+			return;
+		}
 	});
 
 #pragma endregion
 
-#pragma region Parameters API
+#pragma region Configuration page
 
-	// Configuration
-	on("/api/configuration", HTTP_GET, [this](AsyncWebServerRequest *request) {
+	// configuration.html
+	on("/configuration", HTTP_GET, [this](AsyncWebServerRequest *request) {
 		DEBUGLOG("%s\r\n", request->url().c_str());
 		if (!this->checkAuth(request))
-			return request->requestAuthentication();
-		this->sendConfiguration(request);
+		{
+			request->requestAuthentication();
+			return;
+		}
+
+		if (!this->handleFileRead("/configuration.html", request))
+		{
+			request->send(404, "text/plain", "FileNotFound");
+			return;
+		}
 	});
 
-	// Connection state
-	on("/api/connectionState", [this](AsyncWebServerRequest *request) {
+	// configuration.html
+	on("/configuration", HTTP_POST, [this](AsyncWebServerRequest *request) {
 		DEBUGLOG("%s\r\n", request->url().c_str());
 		if (!this->checkAuth(request))
-			return request->requestAuthentication();
+		{
+			request->requestAuthentication();
+			return;
+		}
+
+		this->saveConfiguration(request);
+	});
+	
+#pragma endregion
+
+#pragma region API
+
+	// Configuration parameters
+	on("/api/v1/configuration", HTTP_GET, [this](AsyncWebServerRequest *request) {
+		DEBUGLOG("%s\r\n", request->url().c_str());
+
+		if (!this->checkAuth(request))
+		{
+			request->requestAuthentication();
+			return;
+		}
+
+		this->sendConfiguration(request);
+	});
+	
+	// Connection state
+	on("/api/v1/connectionState", [this](AsyncWebServerRequest *request) {
+		DEBUGLOG("%s\r\n", request->url().c_str());
+
+		if (!this->checkAuth(request))
+		{
+			request->requestAuthentication();
+			return;
+		}
+
 		this->sendConnectionState(request);
 	});
 
 	// Scans WiFi networks.
-	on("/api/scanNetworks", HTTP_GET, [this](AsyncWebServerRequest *request)
+	on("/api/v1/scanNetworks", HTTP_GET, [this](AsyncWebServerRequest *request)
 	{
 		DEBUGLOG("%s\r\n", request->url().c_str());
+
 		if (!this->checkAuth(request))
-			return request->requestAuthentication();
+		{
+			request->requestAuthentication();
+			return;
+		}
+
 		this->sendNetworks(request);
 	});
 
@@ -299,15 +384,25 @@ void LocalWebServerClass::serverInit() {
 
 	// Called when the URL is not defined here.
 	// Use it to load content from SPIFFS.
-	onNotFound([this](AsyncWebServerRequest *request) {
+	onNotFound([this](AsyncWebServerRequest *request)
+	{
 		DEBUGLOG("Not found: %s\r\n", request->url().c_str());
+		
 		if (!this->checkAuth(request))
-			return request->requestAuthentication();
+		{
+			request->requestAuthentication();
+			return;
+		}
+
 		AsyncWebServerResponse *response = request->beginResponse(200);
 		response->addHeader("Connection", "close");
 		response->addHeader("Access-Control-Allow-Origin", "*");
+		
 		if (!this->handleFileRead(request->url(), request))
+		{
 			request->send(404, "text/plain", "FileNotFound");
+		}
+		
 		delete response; // Free up memory!
 	});
 
@@ -368,6 +463,8 @@ bool LocalWebServerClass::checkAuth(AsyncWebServerRequest *request)
 			DeviceConfiguration.HTTPUsername.c_str());
 	}
 }
+
+#pragma region IO Oprations
 
 /** @brief Handle file list.
  *  @param request AsyncWebServerRequest, Request object.
@@ -564,6 +661,8 @@ void LocalWebServerClass::handleFileUpload(
 	}
 }
 
+#pragma endregion
+
 #ifdef ENABLE_OTA_ARDUINO
 
 /** @brief Configure OTA.
@@ -611,6 +710,8 @@ void LocalWebServerClass::configureOTA(String password) {
 }
 
 #endif // ENABLE_OTA_ARDUINO
+
+#pragma region ENABLE_OTA_HTTP
 
 #ifdef ENABLE_OTA_HTTP
 
@@ -743,6 +844,8 @@ void LocalWebServerClass::sendUpdateFWValues(AsyncWebServerRequest *request)
 }
 
 #endif // ENABLE_OTA_HTT
+
+#pragma endregion
 
 #pragma region API Handlers
 
@@ -980,7 +1083,11 @@ void LocalWebServerClass::saveConfiguration(AsyncWebServerRequest *request)
 
 	}
 
-	handleFileRead(request->url(), request);
+	if (!this->handleFileRead("/configuration.html", request))
+	{
+		request->send(404, "text/plain", "FileNotFound");
+		return;
+	}
 }
 
 #pragma endregion

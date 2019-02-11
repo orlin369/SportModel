@@ -24,6 +24,7 @@ SOFTWARE.
 
 #pragma region Headres
 
+#include "Notes.h"
 #include "ApplicationConfiguration.h"
 
 #include "DebugPort.h"
@@ -92,6 +93,8 @@ void configure_file_system();
 
 void configure_to_sta();
 
+void shutdown();
+
 #pragma endregion
 
 void setup()
@@ -107,12 +110,14 @@ void setup()
 	configure_file_system();
 
 	// Try to load configuration from file system.
-	if (!load_device_configuration(&SPIFFS)) {
+	if (!load_device_configuration(&SPIFFS))
+	{
 		// Load defaults if any error.
 		set_default_device_configuration(&SPIFFS);
 	}
 
 	ButtonGesture.configure();
+	Indications.configure();
 	
 	int GestureL = Gestures::None;
 	for (;;)
@@ -136,10 +141,11 @@ void setup()
 
 	if (AppMode_g == ApplicationMode::NormalOperation)
 	{
+		Indications.playNormalOperationMode();
+
 		configure_to_sta();
 
 #ifdef ENABLE_CAYENNE_MODE
-		// TODO: play normal operation song.
 		Cayenne.begin(DeviceConfiguration.CayenneUsername.c_str(),
 			DeviceConfiguration.CayennePassword.c_str(),
 			DeviceConfiguration.CayenneClientID.c_str());
@@ -148,7 +154,8 @@ void setup()
 	}
 	else if (AppMode_g == ApplicationMode::Configuriation)
 	{
-		// TODO: Play configuration operation song.
+		Indications.playConfigurationMode();
+
 		LocalWebServer.configure(&SPIFFS);
 	}
 }
@@ -160,7 +167,7 @@ void loop()
 
 	if (GestureL == Gestures::LongHold)
 	{
-		ESP.deepSleep(40000);
+		shutdown();
 	}
 
 	if (AppMode_g == ApplicationMode::NormalOperation)
@@ -316,6 +323,8 @@ void handler_sta_mode_got_ip(WiFiEventStationModeGotIP evt)
 	DEBUGLOG("DNS:           %s\r\n", WiFi.dnsIP().toString().c_str());
 
 	WiFiDisconnectedSince_g = 0;
+
+	Indications.playConnectedToInet();
 }
 
 /** @brief Handler that execute when the device is disconnected.
@@ -333,13 +342,39 @@ void handler_sta_mode_disconnected(WiFiEventStationModeDisconnected evt)
 	}
 
 	DEBUGLOG("Disconnected for %d seconds.\r\n", (int)((millis() - WiFiDisconnectedSince_g) / 1000));
+
+	Indications.playDisconnectedFromInet();
 }
 
 #pragma endregion
 
+void shutdown()
+{
+	Indications.playShutdown();
+	ESP.deepSleep(40000);
+}
+
 #pragma region Cayenne
 
 #ifdef ENABLE_CAYENNE_MODE
+
+CAYENNE_CONNECTED()
+{
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
+	Indications.playConnectedToService();
+}
+
+CAYENNE_DISCONNECTED()
+{
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
+	Indications.playDisconnectedFromService();
+}
 
 // Default function for sending sensor data at intervals to Cayenne.
 // You can also use functions for specific channels, e.g CAYENNE_OUT(1) for sending channel 1 data.
@@ -366,7 +401,9 @@ CAYENNE_IN_DEFAULT()
 	DEBUGLOG("\r\n");
 
 	DEBUGLOG("Channel %u, value %s", request.channel, getValue.asString());
-	//Process message here. If there is an error set an error message using getValue.setError(), e.g getValue.setError("Error message");
+	//Process message here.
+	// If there is an error set an error message using getValue.setError(),
+	// e.g getValue.setError("Error message");
 }
 
 #endif // ENABLE_CAYENNE_MODE

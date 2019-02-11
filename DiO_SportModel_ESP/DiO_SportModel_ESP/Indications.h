@@ -9,13 +9,29 @@
 	#include "WProgram.h"
 #endif
 
+#pragma region Headers
+
+#include "ApplicationConfiguration.h"
+
+#include "DebugPort.h"
+
+#pragma endregion
+
+
 class IndicationsClass
 {
  protected:
-
+	 void playNote(long frequency, long length);
 
  public:
 	void configure();
+	void playNormalOperationMode();
+	void playConfigurationMode();
+	void playShutdown();
+	void playConnectedToInet();
+	void playConnectedToService();
+	void playDisconnectedFromInet();
+	void playDisconnectedFromService();
 };
 
 extern IndicationsClass Indications;

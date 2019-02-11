@@ -115,11 +115,13 @@
     <ClInclude Include="ApplicationConfiguration.h" />
     <ClInclude Include="ApplicationMode.h" />
     <ClInclude Include="ButtonGesture.h" />
+    <ClInclude Include="data\ButtonGesture.h" />
     <ClInclude Include="DebugPort.h" />
     <ClInclude Include="DeviceConfiguration.h" />
     <ClInclude Include="GeneralHelper.h" />
     <ClInclude Include="Indications.h" />
     <ClInclude Include="LocalWebServer.h" />
+    <ClInclude Include="Notes.h" />
     <ClInclude Include="__vm\.DiO_SportModel_ESP.vsarduino.h" />
   </ItemGroup>
   <ItemGroup>

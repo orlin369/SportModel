@@ -57,6 +57,8 @@ SOFTWARE.
 
 #define PIN_BUTTON D1
 
+#define PIN_BUZZER D3
+
 #pragma endregion
 
 #pragma region Debug Port
