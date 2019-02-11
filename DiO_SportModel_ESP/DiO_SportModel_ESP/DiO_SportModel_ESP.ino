@@ -1,19 +1,51 @@
 /*
- Name:		DiO_SportModel_ESP.ino
- Created:	2/9/2019 12:48:01 PM
- Author:	Orlin
+
+Copyright (c) [2019] [Orlin Dimitrov]
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
 */
 
 #pragma region Headres
+
+#include "ApplicationConfiguration.h"
+
+#include "DebugPort.h"
 
 #include <ESP8266WiFi.h>
 #include <FS.h>
 #include <WiFiClient.h>
 #include <ESP8266HTTPClient.h>
 
-#include "ApplicationConfiguration.h"
+#ifdef ENABLE_OTA_ARDUINO
 
-#include "DebugPort.h"
+#include <ArduinoOTA.h>
+
+#endif // ENABLE_OTA_ARDUINO
+
+#ifdef ENABLE_CAYENNE_MODE
+
+//#define CAYENNE_DEBUG
+//#define CAYENNE_PRINT DEBUG_PORT
+#include <CayenneMQTTESP8266.h>
+
+#endif // ENABLE_CAYENNE_MODE
 
 #include "GeneralHelper.h"
 #include "DeviceConfiguration.h"
@@ -21,12 +53,6 @@
 #include "Indications.h"
 #include "ApplicationMode.h"
 #include "ButtonGesture.h"
-
-//#define CAYENNE_DEBUG
-//#define CAYENNE_PRINT DEBUG_PORT
-#include <CayenneMQTTESP8266.h>
-
-// the setup function runs once when you press reset or power the board
 #include "LocalWebServer.h"
 
 #pragma endregion
@@ -58,15 +84,15 @@ WiFiEventHandler OnAPModeStationDisconnectedHandle_g;
 
 #pragma endregion
 
-
 #pragma region Prototypes
 
 void device_properties();
+
 void configure_file_system();
+
 void configure_to_sta();
 
 #pragma endregion
-
 
 void setup()
 {
@@ -112,15 +138,18 @@ void setup()
 	{
 		configure_to_sta();
 
+#ifdef ENABLE_CAYENNE_MODE
 		// TODO: play normal operation song.
 		Cayenne.begin(DeviceConfiguration.CayenneUsername.c_str(),
 			DeviceConfiguration.CayennePassword.c_str(),
 			DeviceConfiguration.CayenneClientID.c_str());
+#endif // ENABLE_CAYENNE_MODE
+
 	}
 	else if (AppMode_g == ApplicationMode::Configuriation)
 	{
 		// TODO: Play configuration operation song.
-		// TODO: Start the WEB server.
+		LocalWebServer.configure(&SPIFFS);
 	}
 }
 
@@ -129,18 +158,24 @@ void loop()
 {
 	int GestureL = ButtonGesture.check();
 
-	if (AppMode_g == ApplicationMode::NormalOperation)
-	{
-		Cayenne.loop();
-	}
-	else if (AppMode_g == ApplicationMode::Configuriation)
-	{
-		// TODO: Run the WEB server.
-	}
-
 	if (GestureL == Gestures::LongHold)
 	{
 		ESP.deepSleep(40000);
+	}
+
+	if (AppMode_g == ApplicationMode::NormalOperation)
+	{
+
+#ifdef ENABLE_CAYENNE_MODE
+
+		Cayenne.loop();
+
+#endif // ENABLE_CAYENNE_MODE
+
+	}
+	else if (AppMode_g == ApplicationMode::Configuriation)
+	{
+		LocalWebServer.handle();
 	}
 }
 
@@ -149,13 +184,12 @@ void loop()
 /** @brief Printout in the debug console flash state.
  *  @return Void.
  */
-void device_properties() {
-#ifndef RELEASE
+void device_properties()
+{
 	DEBUGLOG("\r\n");
 	DEBUGLOG(__PRETTY_FUNCTION__);
 	DEBUGLOG("\r\n");
-#endif // RELEASE
-
+	
 	DEBUGLOG("Flash chip size: %u\r\n", ESP.getFlashChipRealSize());
 	DEBUGLOG("Sketch size: %u\r\n", ESP.getSketchSize());
 	DEBUGLOG("Free flash space: %u\r\n", ESP.getFreeSketchSpace());
@@ -176,6 +210,10 @@ void device_properties() {
  */
 void configure_file_system()
 {
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
 	if (!SPIFFS.begin())
 	{
 		DEBUGLOG("Can not load file system.\r\n");
@@ -201,12 +239,11 @@ void configure_file_system()
 /** @brief Configure WiFi module to station.
  *  @return Void.
  */
-void configure_to_sta() {
-#ifndef RELEASE
+void configure_to_sta()
+{
 	DEBUGLOG("\r\n");
 	DEBUGLOG(__PRETTY_FUNCTION__);
 	DEBUGLOG("\r\n");
-#endif // RELEASE
 
 	// Register WiFi Event to control connection LED.
 	OnStationModeConnectedHandler_g = WiFi.onStationModeConnected(
@@ -225,7 +262,7 @@ void configure_to_sta() {
 	});
 
 	// Set the host name.
-	WiFi.hostname(DeviceConfiguration.deviceName.c_str());
+	WiFi.hostname(DeviceConfiguration.DeviceName.c_str());
 
 	//disconnect required here
 	//improves reconnect reliability
@@ -235,39 +272,30 @@ void configure_to_sta() {
 	WiFi.setAutoReconnect(true);
 	WiFi.mode(WIFI_STA);
 
-	DEBUGLOG("WiFi Connecting: %s\r\n", DeviceConfiguration.ssid.c_str());
+	DEBUGLOG("WiFi Connecting: %s\r\n", DeviceConfiguration.STASSID.c_str());
 
 	WiFi.begin(DeviceConfiguration.STASSID.c_str(), DeviceConfiguration.STAPassword.c_str());
 
 	// Check the DHCP.
-	if (!DeviceConfiguration.dhcp) {
-		DEBUGLOG("NO DHCP\r\n");
-		WiFi.config(DeviceConfiguration.ip, DeviceConfiguration.gateway, DeviceConfiguration.netmask, DeviceConfiguration.dns);
-	}
+	//if (!DeviceConfiguration.dhcp) {
+	//	DEBUGLOG("NO DHCP\r\n");
+	//	WiFi.config(DeviceConfiguration.ip, DeviceConfiguration.gateway, DeviceConfiguration.netmask, DeviceConfiguration.dns);
+	//}
 
 	WiFi.waitForConnectResult();
-
-#ifndef TEST_EFM32_UPDATE
-
-	uint8 PayloadResponseL[2] = { WiFiMode_t::WIFI_STA, (uint8)WiFi.isConnected() };
-	Communicator.sendRawResponse(OpCodes::WiFiMode, StatusCodes::Ok, PayloadResponseL, 2);
-
-#endif // !TEST_EFM32_UPDATE
-
 }
 
 /** @brief Handler that execute when the device is connected.
  *  @param evt WiFiEventStationModeConnected, Data object.
  *  @return Void.
  */
-void handler_sta_mode_connected(WiFiEventStationModeConnected evt) {
-#ifndef RELEASE
+void handler_sta_mode_connected(WiFiEventStationModeConnected evt)
+{
 	DEBUGLOG("\r\n");
 	DEBUGLOG(__PRETTY_FUNCTION__);
 	DEBUGLOG("\r\n");
-#endif // RELEASE
 
-	DEBUGLOG("WiFi Connected: %s\r\n", DeviceConfiguration.ssid.c_str());
+	DEBUGLOG("WiFi Connected: %s\r\n", DeviceConfiguration.STASSID.c_str());
 	DEBUGLOG("Waiting for DHCP\r\n");
 
 	WiFiDisconnectedSince_g = 0;
@@ -277,12 +305,11 @@ void handler_sta_mode_connected(WiFiEventStationModeConnected evt) {
  *  @param evt WiFiEventStationModeGotIP, Callback handler.
  *  @return Void.
  */
-void handler_sta_mode_got_ip(WiFiEventStationModeGotIP evt) {
-#ifndef RELEASE
+void handler_sta_mode_got_ip(WiFiEventStationModeGotIP evt)
+{
 	DEBUGLOG("\r\n");
 	DEBUGLOG(__PRETTY_FUNCTION__);
 	DEBUGLOG("\r\n");
-#endif // RELEASE
 
 	DEBUGLOG("GotIP Address: %s\r\n", WiFi.localIP().toString().c_str());
 	DEBUGLOG("Gateway:       %s\r\n", WiFi.gatewayIP().toString().c_str());
@@ -295,12 +322,11 @@ void handler_sta_mode_got_ip(WiFiEventStationModeGotIP evt) {
  *  @param evt WiFiEventStationModeDisconnected, Callback handler.
  *  @return Void.
  */
-void handler_sta_mode_disconnected(WiFiEventStationModeDisconnected evt) {
-#ifndef RELEASE
+void handler_sta_mode_disconnected(WiFiEventStationModeDisconnected evt)
+{
 	DEBUGLOG("\r\n");
 	DEBUGLOG(__PRETTY_FUNCTION__);
 	DEBUGLOG("\r\n");
-#endif // RELEASE
 
 	if (WiFiDisconnectedSince_g == 0) {
 		WiFiDisconnectedSince_g = millis();
@@ -313,10 +339,16 @@ void handler_sta_mode_disconnected(WiFiEventStationModeDisconnected evt) {
 
 #pragma region Cayenne
 
+#ifdef ENABLE_CAYENNE_MODE
+
 // Default function for sending sensor data at intervals to Cayenne.
 // You can also use functions for specific channels, e.g CAYENNE_OUT(1) for sending channel 1 data.
 CAYENNE_OUT_DEFAULT()
 {
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
 	// Write data to Cayenne here. This example just sends the current uptime in milliseconds on virtual channel 0.
 	Cayenne.virtualWrite(0, millis());
 	// Some examples of other functions you can use to send data.
@@ -329,9 +361,15 @@ CAYENNE_OUT_DEFAULT()
 // You can also use functions for specific channels, e.g CAYENNE_IN(1) for channel 1 commands.
 CAYENNE_IN_DEFAULT()
 {
-	CAYENNE_LOG("Channel %u, value %s", request.channel, getValue.asString());
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
+	DEBUGLOG("Channel %u, value %s", request.channel, getValue.asString());
 	//Process message here. If there is an error set an error message using getValue.setError(), e.g getValue.setError("Error message");
 }
+
+#endif // ENABLE_CAYENNE_MODE
 
 #pragma endregion
 

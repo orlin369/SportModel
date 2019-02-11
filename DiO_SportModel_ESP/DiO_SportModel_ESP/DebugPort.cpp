@@ -9,7 +9,7 @@
  */
 void configure_debug_port()
 {
-#ifndef RELEASE
+#ifdef EANBLE_DEBUG_OUT
 	DEBUG_PORT.begin(DEBUG_PORT_BAUDRATE, SERIAL_8N1);
 	DEBUG_PORT.print("\r\n\r\n\r\n");
 	DEBUG_PORT.setDebugOutput(true);

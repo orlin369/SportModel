@@ -1,5 +1,29 @@
 // ApplicationConfiguration.h
 
+/*
+
+Copyright (c) [2019] [Orlin Dimitrov]
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+*/
+
 #ifndef _APPLICATIONCONFIGURATION_h
 #define _APPLICATIONCONFIGURATION_h
 
@@ -14,19 +38,18 @@
 /** @brief Brand name. */
 #define DEVICE_BRAND "Sport Model"
 
-// NOTE: Be careful with the Version number in the server and here in the source code.
-// TODO: Version Controll - Coment this version notation with the team.
-// 1000
-// 10 - Major
-// 00 - Minor
 /** @brief Firmware version string. */
-#define ESP_FW_VERSION "0001"
+#define ESP_FW_VERSION 1
 
-/**
- * @brief Release flag.
- * Comment to enable debug output
- */
- //#define RELEASE
+#define EANBLE_DEBUG_OUT
+
+#define ENABLE_WEB_EDITOR
+
+//#define ENABLE_OTA_ARDUINO
+
+#define ENABLE_OTA_HTTP
+
+#define ENABLE_CAYENNE_MODE
 
 #pragma endregion
 
@@ -38,9 +61,13 @@
 
 #pragma region Debug Port
 
+#ifdef EANBLE_DEBUG_OUT
+
 #define DEBUG_PORT Serial
 
 #define DEBUG_PORT_BAUDRATE 115200
+
+#endif // EANBLE_DEBUG_OUT
 
 #pragma endregion
 
@@ -61,7 +88,9 @@
 
 #pragma endregion
 
-#pragma region HTTP Authentication
+#pragma region HTTP WEB / Authentication
+
+#define PORT_HTTP 80
 
 /** @brief Default HTTP username. */
 #define DEFAULT_HTTP_USERNAME "admin"
@@ -71,8 +100,16 @@
 
 #pragma endregion
 
+#pragma region Config File Path
+
+/* @brief JSON configuration file. */
+#define CONFIG_FILE "/config.json"
+
+#pragma endregion
 
 #pragma region Cayenne
+
+#ifdef ENABLE_CAYENNE_MODE
 
 /** @brief Default Cayenne Username. */
 #define DEFAULT_CAYENNE_USERNAME "YOUR_CAYENNE_USERNAME"
@@ -83,12 +120,7 @@
 /** @brief Default Cayenne password. */
 #define DEFAULT_CAYENNE_CLIENT_ID "YOUR_CAYENNE_CLIENT_ID"
 
-#pragma endregion
-
-#pragma region Config File Path
-
-/* @brief JSON configuration file. */
-#define CONFIG_FILE "/config.json"
+#endif // ENABLE_CAYENNE_MODE
 
 #pragma endregion
 

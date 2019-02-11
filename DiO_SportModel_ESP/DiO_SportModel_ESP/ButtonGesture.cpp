@@ -8,6 +8,10 @@ ButtonGestureClass ButtonGesture;
 
 void ButtonGestureClass::configure()
 {
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
 	pinMode(PIN_BUTTON, INPUT_PULLUP);
 }
 
@@ -117,6 +121,10 @@ int ButtonGestureClass::check()
  */
 void ButtonGestureClass::setCallbackClick(void(*callback)(void))
 {
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
 	callbackClick = callback;
 }
 
@@ -126,6 +134,10 @@ void ButtonGestureClass::setCallbackClick(void(*callback)(void))
  */
 void ButtonGestureClass::setCallbackReleased(void(*callback)(void))
 {
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
 	callbackReleased = callback;
 }
 
@@ -135,6 +147,10 @@ void ButtonGestureClass::setCallbackReleased(void(*callback)(void))
  */
 void ButtonGestureClass::setCallbackHold(void(*callback)(void))
 {
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
 	callbackHold = callback;
 }
 
@@ -144,5 +160,9 @@ void ButtonGestureClass::setCallbackHold(void(*callback)(void))
  */
 void ButtonGestureClass::setCallbackLongHold(void(*callback)(void))
 {
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
 	callbackLongHold = callback;
 }

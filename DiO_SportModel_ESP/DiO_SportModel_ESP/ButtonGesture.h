@@ -1,7 +1,7 @@
-// ButtonGeasture.h
+// ButtonGesture.h
 
-#ifndef _BUTTONGEASTURE_h
-#define _BUTTONGEASTURE_h
+#ifndef _BUTTONGESTURE_h
+#define _BUTTONGESTURE_h
 
 #if defined(ARDUINO) && ARDUINO >= 100
 	#include "arduino.h"
@@ -12,6 +12,8 @@
 #pragma region Headres
 
 #include "ApplicationConfiguration.h"
+
+#include "DebugPort.h"
 
 #pragma endregion
 

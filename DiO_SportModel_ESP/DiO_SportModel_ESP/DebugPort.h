@@ -18,7 +18,7 @@
 
 #pragma region Definitions
 
-#ifndef RELEASE
+#ifdef EANBLE_DEBUG_OUT
 #define DEBUGLOG(...) DEBUG_PORT.printf(__VA_ARGS__)
 #else
 #define DEBUGLOG(...)
