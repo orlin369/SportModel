@@ -7,6 +7,7 @@
 void IndicationsClass::configure()
 {
 	pinMode(PIN_BUZZER, OUTPUT);
+	pinMode(PIN_LED, OUTPUT);
 }
 
 void IndicationsClass::playNote(long frequency, long length)

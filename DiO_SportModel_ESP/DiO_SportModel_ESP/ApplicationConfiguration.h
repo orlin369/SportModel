@@ -55,9 +55,11 @@ SOFTWARE.
 
 #pragma region GPIO Map
 
-#define PIN_BUTTON D1
+#define PIN_BUTTON D5
 
-#define PIN_BUZZER D3
+#define PIN_LED D2
+
+#define PIN_BUZZER D1
 
 #pragma endregion
 
