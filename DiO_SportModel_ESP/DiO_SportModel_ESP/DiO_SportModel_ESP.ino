@@ -83,6 +83,15 @@ WiFiEventHandler OnAPModeStationConnectedHandle_g;
 /* @brief On AP mode station disconnected. */
 WiFiEventHandler OnAPModeStationDisconnectedHandle_g;
 
+#ifdef ENABLE_CAYENNE_MODE
+
+/* @brief On AP mode station disconnected. */
+unsigned long OnlineTime_g;
+
+unsigned long PreviousTime_g;
+
+#endif
+
 #pragma endregion
 
 #pragma region Prototypes
@@ -496,6 +505,51 @@ CAYENNE_IN_DEFAULT()
 	//Process message here.
 	// If there is an error set an error message using getValue.setError(),
 	// e.g getValue.setError("Error message");
+}
+
+/** @brief Tracks battery power in percentage.
+ *  @param request Object that holds chanel and data.
+ *  @note You can also use functions for specific channels, e.g CAYENNE_IN(V23) for channel 1 commands.
+ *  @return Void.
+ */
+CAYENNE_OUT(V23)
+{
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
+	float BatteryLevelL = 100.0;
+	Cayenne.virtualWrite(V23, BatteryLevelL);
+}
+
+/** @brief Tracks system power ON time in minutes.
+ *  @param request Object that holds chanel and data.
+ *  @note You can also use functions for specific channels, e.g CAYENNE_IN(V24) for channel 1 commands.
+ *  @return Void.
+ */
+CAYENNE_OUT(V24)
+{
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
+	float TimeL = (millis() / 1000.0) / 60.0;
+	Cayenne.virtualWrite(V24, TimeL);
+}
+
+/** @brief Tracks online time in minutes.
+ *  @param request Object that holds chanel and data.
+ *  @note You can also use functions for specific channels, e.g CAYENNE_IN(1) for channel 1 commands.
+ *  @return Void.
+ */
+CAYENNE_OUT(V25)
+{
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
+	OnlineTime_g = ((millis() - PreviousTime_g) / 1000.0) / 60.0;
+	Cayenne.virtualWrite(V25, OnlineTime_g);
 }
 
 #endif // ENABLE_CAYENNE_MODE

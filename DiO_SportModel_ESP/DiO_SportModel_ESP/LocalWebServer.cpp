@@ -978,19 +978,20 @@ void LocalWebServerClass::saveConfiguration(AsyncWebServerRequest *request)
 
 #pragma region STA
 
-			if (request->argName(index) == "STASSID") {
+			if (request->argName(index) == "STASSID")
+			{
 				DeviceConfiguration.STASSID = urlDecode(request->arg(index));
 				DEBUGLOG("STASSID: %s\r\n", DeviceConfiguration.STASSID.c_str());
 				continue;
 			}
 
-			if (request->argName(index) == "STAPassword") {
+			if (request->argName(index) == "STAPassword")
+			{
 				String pswd = urlDecode(request->arg(index));
 				if (pswd != "")
 				{
-					DeviceConfiguration.STAPassword = pswd);
+					DeviceConfiguration.STAPassword = pswd;
 					DEBUGLOG("STAPassword: %s\r\n", DeviceConfiguration.STAPassword.c_str());
-
 				}
 				continue;
 			}
@@ -1003,9 +1004,8 @@ void LocalWebServerClass::saveConfiguration(AsyncWebServerRequest *request)
 				String pswd = urlDecode(request->arg(index));
 				if (pswd != "")
 				{
-					DeviceConfiguration.APPassword = pswd);
+					DeviceConfiguration.APPassword = pswd;
 					DEBUGLOG("APPassword: %s\r\n", DeviceConfiguration.APPassword.c_str());
-
 				}
 				continue;
 			}
