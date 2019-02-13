@@ -1,4 +1,4 @@
-﻿<!-- 
+<!-- 
 Copyright (c) [2019] [Orlin Dimitrov]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,54 +19,22 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -->
-
 <!DOCTYPE html>
 <html>
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1"/>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-		<link rel="stylesheet" href="style.css" type="text/css" />
+		<link rel="stylesheet" href="style.css" type="text/css"/>
 		<title>Sport Model</title>
 	</head>
-	<body id="configuration" style="margin:0; padding:0;">
+	<body id="index" style="margin:0; padding:0;">
 		<a href="/dashboard" class="btn btn--s"><strong>Dashboard</strong></a>
 		<a href="/config" class="btn btn--s"><strong>Configuration</strong></a>
 		<a href="/update" class="btn btn--s"><strong>Update</strong></a>
 		<a href="/logout" class="btn btn--s"><strong>Logout</strong></a>
 		<hr>
+		Content
 
-		<form method='post' action='/update' enctype='multipart/form-data'>
-		    <table>
-		        <tr>
-		            <td>
-		                <input id="fileName" type='file' name='update' onchange="summd5()" disabled>
-		            </td>
-		        </tr>
-		        <tr>
-		            <td>
-		                <input id="updateButton" type='submit' value='Update' disabled>
-		            </td>
-		        </tr>
-		        <tr>
-		            <td id="md5row" hidden>
-		                Calculated file MD5 hash: <span id="clientHash">Select a file</span><br>
-		                Size: <span id="fileSize"></span> Bytes
-		            </td>
-		        </tr>
-		        <tr>
-		            <td>
-		                Checking if remote update is possible... <span id="remupd"></span>
-		            </td>
-		        </tr>
-		        <tr>
-		            <td>
-		                <span id="remupdResult"></span>
-		            </td>
-		        </tr>
-		    </table>
-		</form>
-
-		<script src="spark-md5.js" type="text/javascript"></script>
-		<script src="update.js" type="text/javascript"></script>
+		<script src="dashboard.js"></script>
 	</body>
 </html>

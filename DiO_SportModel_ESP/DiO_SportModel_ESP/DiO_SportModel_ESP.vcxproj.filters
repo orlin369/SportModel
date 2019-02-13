@@ -19,6 +19,36 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="DiO_SportModel_ESP.ino" />
+    <None Include="data\edit.html">
+      <Filter>data</Filter>
+    </None>
+    <None Include="data\graphs.js.gz">
+      <Filter>data</Filter>
+    </None>
+    <None Include="data\microajax.js">
+      <Filter>data</Filter>
+    </None>
+    <None Include="data\spark-md5.js">
+      <Filter>data</Filter>
+    </None>
+    <None Include="data\style.css">
+      <Filter>data</Filter>
+    </None>
+    <None Include="data\update.html">
+      <Filter>data</Filter>
+    </None>
+    <None Include="data\configuration.html">
+      <Filter>data</Filter>
+    </None>
+    <None Include="data\configuration.js">
+      <Filter>data</Filter>
+    </None>
+    <None Include="data\dashboard.html">
+      <Filter>data</Filter>
+    </None>
+    <None Include="data\dashboard.js">
+      <Filter>data</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="__vm\.DiO_SportModel_ESP.vsarduino.h">
@@ -48,9 +78,6 @@
     <ClInclude Include="GeneralHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="data\ButtonGesture.h">
-      <Filter>data</Filter>
-    </ClInclude>
     <ClInclude Include="Notes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -74,5 +101,10 @@
     <ClCompile Include="GeneralHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="data\favicon.ico">
+      <Filter>data</Filter>
+    </Image>
   </ItemGroup>
 </Project>

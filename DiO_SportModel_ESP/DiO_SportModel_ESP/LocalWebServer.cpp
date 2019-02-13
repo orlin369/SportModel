@@ -56,7 +56,7 @@ void LocalWebServerClass::configure(FS* fs)
 	// Configure and start Web server
 	AsyncWebServer::begin();
 
-	serverInit();
+	addHandlers();
 
 	// Configure DNS.
 	MDNS.begin(DeviceConfiguration.DeviceName.c_str());
@@ -146,10 +146,10 @@ String LocalWebServerClass::getContentType(String filename, AsyncWebServerReques
 	return "text/plain";
 }
 
-/** @brief Initialize the server.
+/** @brief Add handlers to roots.
  *  @return Void.
  */
-void LocalWebServerClass::serverInit() {
+void LocalWebServerClass::addHandlers() {
 	DEBUGLOG("\r\n");
 	DEBUGLOG(__PRETTY_FUNCTION__);
 	DEBUGLOG("\r\n");
@@ -224,7 +224,7 @@ void LocalWebServerClass::serverInit() {
 	});
 
 	// Update possible.
-	on("/api/updatepossible", [this](AsyncWebServerRequest *request) {
+	on("/api/v1/update/possible", [this](AsyncWebServerRequest *request) {
 		DEBUGLOG("%s\r\n", request->url().c_str());
 		if (!this->checkAuth(request))
 			return request->requestAuthentication();
@@ -232,7 +232,7 @@ void LocalWebServerClass::serverInit() {
 	});
 
 	// Sets the MD5 sum of the firmware.
-	on("/api/setmd5", [this](AsyncWebServerRequest *request) {
+	on("/api/v1/setmd5", [this](AsyncWebServerRequest *request) {
 		DEBUGLOG("%s\r\n", request->url().c_str());
 		if (!this->checkAuth(request))
 			return request->requestAuthentication();
@@ -336,9 +336,23 @@ void LocalWebServerClass::serverInit() {
 	
 #pragma endregion
 
+#pragma region Logout
+
+	// login.html
+	on("/logout", HTTP_POST, [this](AsyncWebServerRequest *request) {
+		DEBUGLOG("%s\r\n", request->url().c_str());
+		if (this->checkAuth(request))
+		{
+			request->redirect("/login");
+			return;
+		}
+	});
+
+#pragma endregion
+
 #pragma region API
 
-	// Configuration parameters
+	// Configuration parameters.
 	on("/api/v1/configuration", HTTP_GET, [this](AsyncWebServerRequest *request) {
 		DEBUGLOG("%s\r\n", request->url().c_str());
 
@@ -351,7 +365,7 @@ void LocalWebServerClass::serverInit() {
 		this->sendConfiguration(request);
 	});
 	
-	// Connection state
+	// Connection state.
 	on("/api/v1/connectionState", [this](AsyncWebServerRequest *request) {
 		DEBUGLOG("%s\r\n", request->url().c_str());
 
@@ -910,7 +924,7 @@ void LocalWebServerClass::sendConnectionState(AsyncWebServerRequest *request) {
 	WiFi.scanNetworks(true);
 
 	String values = "";
-	values += "connectionstate|" + state + "|div\n";
+	values += "ConnectionState|" + state + "|div\n";
 	//values += "networks|Scanning networks ...|div\n";
 	request->send(200, "text/plain", values);
 	state = "";

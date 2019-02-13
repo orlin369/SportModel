@@ -107,6 +107,18 @@
     <DebuggerFlavor>VisualMicroDebugger</DebuggerFlavor>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="data\configuration.html" />
+    <None Include="data\configuration.js" />
+    <None Include="data\dashboard.js" />
+    <None Include="data\edit.html" />
+    <None Include="data\graphs.js.gz" />
+    <None Include="data\dashboard.html">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="data\microajax.js" />
+    <None Include="data\spark-md5.js" />
+    <None Include="data\style.css" />
+    <None Include="data\update.html" />
     <None Include="DiO_SportModel_ESP.ino">
       <FileType>CppCode</FileType>
     </None>
@@ -115,7 +127,6 @@
     <ClInclude Include="ApplicationConfiguration.h" />
     <ClInclude Include="ApplicationMode.h" />
     <ClInclude Include="ButtonGesture.h" />
-    <ClInclude Include="data\ButtonGesture.h" />
     <ClInclude Include="DebugPort.h" />
     <ClInclude Include="DeviceConfiguration.h" />
     <ClInclude Include="GeneralHelper.h" />
@@ -131,6 +142,9 @@
     <ClCompile Include="GeneralHelper.cpp" />
     <ClCompile Include="Indications.cpp" />
     <ClCompile Include="LocalWebServer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="data\favicon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

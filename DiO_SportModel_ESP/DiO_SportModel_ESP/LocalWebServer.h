@@ -192,10 +192,10 @@ class LocalWebServerClass : public AsyncWebServer
 	  */
 	 bool checkAuth(AsyncWebServerRequest *request);
 
-	 /** @brief Initialize the server.
+	 /** @brief Add handlers to roots.
 	  *  @return Void.
 	  */
-	 void serverInit();
+	 void addHandlers();
 
 	 /** @brief Decode URL unification. Based on https://code.google.com/p/avr-netino/
       *  @param input String, String to decode.
