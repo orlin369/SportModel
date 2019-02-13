@@ -254,7 +254,7 @@ void LocalWebServerClass::addHandlers() {
 		DEBUGLOG("%s\r\n", request->url().c_str());
 		if (this->checkAuth(request))
 		{
-			request->redirect("/settings");
+			request->redirect("/config");
 			return;
 		}
 
@@ -304,10 +304,42 @@ void LocalWebServerClass::addHandlers() {
 
 #pragma endregion
 
+#pragma region Dashboard page
+
+	// configuration.html
+	on("/dashboard", HTTP_GET, [this](AsyncWebServerRequest *request) {
+		DEBUGLOG("%s\r\n", request->url().c_str());
+		if (!this->checkAuth(request))
+		{
+			request->requestAuthentication();
+			return;
+		}
+
+		if (!this->handleFileRead("/dashboard.html", request))
+		{
+			request->send(404, "text/plain", "FileNotFound");
+			return;
+		}
+	});
+
+	// configuration.html
+	on("/dashboard", HTTP_POST, [this](AsyncWebServerRequest *request) {
+		DEBUGLOG("%s\r\n", request->url().c_str());
+		if (!this->checkAuth(request))
+		{
+			request->requestAuthentication();
+			return;
+		}
+
+		this->saveConfiguration(request);
+	});
+
+#pragma endregion
+
 #pragma region Configuration page
 
 	// configuration.html
-	on("/configuration", HTTP_GET, [this](AsyncWebServerRequest *request) {
+	on("/config", HTTP_GET, [this](AsyncWebServerRequest *request) {
 		DEBUGLOG("%s\r\n", request->url().c_str());
 		if (!this->checkAuth(request))
 		{
@@ -323,7 +355,7 @@ void LocalWebServerClass::addHandlers() {
 	});
 
 	// configuration.html
-	on("/configuration", HTTP_POST, [this](AsyncWebServerRequest *request) {
+	on("/config", HTTP_POST, [this](AsyncWebServerRequest *request) {
 		DEBUGLOG("%s\r\n", request->url().c_str());
 		if (!this->checkAuth(request))
 		{
@@ -331,7 +363,7 @@ void LocalWebServerClass::addHandlers() {
 			return;
 		}
 
-		this->saveConfiguration(request);
+		//this->saveConfiguration(request);
 	});
 	
 #pragma endregion
@@ -339,7 +371,7 @@ void LocalWebServerClass::addHandlers() {
 #pragma region Logout
 
 	// login.html
-	on("/logout", HTTP_POST, [this](AsyncWebServerRequest *request) {
+	on("/logout", HTTP_GET, [this](AsyncWebServerRequest *request) {
 		DEBUGLOG("%s\r\n", request->url().c_str());
 		if (this->checkAuth(request))
 		{
@@ -366,7 +398,7 @@ void LocalWebServerClass::addHandlers() {
 	});
 	
 	// Connection state.
-	on("/api/v1/connectionState", [this](AsyncWebServerRequest *request) {
+	on("/api/v1/connectionState", HTTP_GET, [this](AsyncWebServerRequest *request) {
 		DEBUGLOG("%s\r\n", request->url().c_str());
 
 		if (!this->checkAuth(request))
@@ -390,6 +422,20 @@ void LocalWebServerClass::addHandlers() {
 		}
 
 		this->sendNetworks(request);
+	});
+
+	// Restart the chip.
+	on("/api/v1/restart", HTTP_GET, [this](AsyncWebServerRequest *request)
+	{
+		DEBUGLOG("%s\r\n", request->url().c_str());
+
+		if (!this->checkAuth(request))
+		{
+			request->requestAuthentication();
+			return;
+		}
+
+		ESP.restart();
 	});
 
 #pragma endregion

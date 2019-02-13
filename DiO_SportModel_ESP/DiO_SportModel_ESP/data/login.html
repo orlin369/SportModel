@@ -1,4 +1,4 @@
-<!-- 
+﻿<!-- 
 Copyright (c) [2019] [Orlin Dimitrov]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,22 +19,36 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -->
+
 <!DOCTYPE html>
 <html>
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1"/>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-		<link rel="stylesheet" href="style.css" type="text/css"/>
+		<link rel="stylesheet" href="style.css" type="text/css" />
 		<title>Sport Model</title>
 	</head>
-	<body id="index" style="margin:0; padding:0;">
-		<a href="/dashboard" class="btn btn--s active"><strong>Dashboard</strong></a>
-		<a href="/config" class="btn btn--s"><strong>Configuration</strong></a>
-		<a href="/update" class="btn btn--s"><strong>Update</strong></a>
-		<a href="/logout" class="btn btn--s"><strong>Logout</strong></a>
-		<hr>
-		Content
-
-		<script src="dashboard.js"></script>
+	<body id="login" style="margin:0; padding:0;">
+		<form action="" method="post">
+			<table border="0" cellspacing="0" cellpadding="3" style="width:350px">
+				<tr>
+					<td align="right">User</td>
+					<td>
+						<input type="text" id="Username" name="Username" value="">
+					</td>
+				</tr>
+				<tr>
+					<td align="right">Password</td>
+					<td>
+						<input type="password" id="Password" name="Password" value="">
+					</td>
+				</tr>
+			</table>
+		</form>
 	</body>
 </html>
+
+
+
+
+

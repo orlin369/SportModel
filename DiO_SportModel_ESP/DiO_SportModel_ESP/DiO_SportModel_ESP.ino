@@ -129,25 +129,25 @@ void setup()
 	Indications.configure();
 	
 	int CounterL = 0;
-	int GestureL = Gestures::None;
-	for (;;)
-	{
-		GestureL = ButtonGesture.check();
-		if (GestureL != Gestures::None)
-		{
-			break;
-		}
-		if (GestureL == Gestures::None)
-		{
-			if (CounterL >= NO_ACTION_TIME_OUT)
-			{
-				shutdown();
-			}
-			CounterL++;
-		}
-		ESP.wdtFeed();
-		delay(1);
-	}
+	int GestureL = Gestures::LongHold;
+	//for (;;)
+	//{
+	//	GestureL = ButtonGesture.check();
+	//	if (GestureL != Gestures::None)
+	//	{
+	//		break;
+	//	}
+	//	if (GestureL == Gestures::None)
+	//	{
+	//		if (CounterL >= NO_ACTION_TIME_OUT)
+	//		{
+	//			shutdown();
+	//		}
+	//		CounterL++;
+	//	}
+	//	ESP.wdtFeed();
+	//	delay(1);
+	//}
 
 	if (GestureL == Gestures::Hold)
 	{

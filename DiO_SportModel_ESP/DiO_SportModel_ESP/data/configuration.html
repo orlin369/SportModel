@@ -30,12 +30,18 @@ SOFTWARE.
 	</head>
 	<body id="configuration" style="margin:0; padding:0;">
 		<a href="/dashboard" class="btn btn--s"><strong>Dashboard</strong></a>
-		<a href="/config" class="btn btn--s"><strong>Configuration</strong></a>
+		<a href="/config" class="btn btn--s active"><strong>Configuration</strong></a>
 		<a href="/update" class="btn btn--s"><strong>Update</strong></a>
 		<a href="/logout" class="btn btn--s"><strong>Logout</strong></a>
 		<hr>
 		<form action="" method="post">
 			<table border="0" cellspacing="0" cellpadding="3" style="width:350px">
+				<tr>
+					<td align="right">FW Version:</td>
+					<td>
+						<div id="FWVersion"></div>
+					</td>
+				</tr>
 				<tr>
 					<td align="right">Device Name:</td>
 					<td>
@@ -65,10 +71,8 @@ SOFTWARE.
 					</td>
 				</tr>
 			</table>
-			<strong>Connection State:</strong>
-			<div id="ConnectionState">N/A</div>
-
-			<strong>Networks: </strong><span id="numNets"></span>
+			<strong>Connection State: </strong><div id="ConnectionState">N/A</div>
+			<strong>Networks: </strong><div id="numNets">0</div>
 			<br>
 			<table border="0" cellspacing="3" style="width:370px">
 				<tr>
@@ -88,7 +92,7 @@ SOFTWARE.
 				</tr>
 				<tr>
 					<td align="center">
-						<a href="javascript:getState(); getNetwork();" style="width:150px" class="btn btn--m btn--blue">Refresh</a>
+						<a href="javascript:getConnectionState(); getNetworks();" style="width:150px" class="btn btn--m btn--blue">Refresh</a>
 					</td>
 				</tr>
 				<tr>
@@ -102,7 +106,7 @@ SOFTWARE.
 		<form action="" method="post">
 			<table border="0" cellspacing="0" cellpadding="3" style="width:350px">
 				<tr>
-					<td align="right">AP Passord:</td>
+					<td align="right">AP Password:</td>
 					<td>
 						<input type="password" id="APPassword" name="APPassword" value="">
 					</td>
@@ -132,7 +136,7 @@ SOFTWARE.
 					</td>
 				</tr>
 					<tr>
-					<td align="right">Use Authentication:</td>
+					<td align="right">Authentication:</td>
 					<td>
 						<input type="checkbox" id="HTTPAuthentication" name="HTTPAuthentication">
 					</td>
