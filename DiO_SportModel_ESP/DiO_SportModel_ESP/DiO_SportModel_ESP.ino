@@ -128,6 +128,7 @@ void setup()
 	ButtonGesture.configure();
 	Indications.configure();
 	
+	int CounterL = 0;
 	int GestureL = Gestures::None;
 	for (;;)
 	{
@@ -136,7 +137,16 @@ void setup()
 		{
 			break;
 		}
+		if (GestureL == Gestures::None)
+		{
+			if (CounterL >= NO_ACTION_TIME_OUT)
+			{
+				shutdown();
+			}
+			CounterL++;
+		}
 		ESP.wdtFeed();
+		delay(1);
 	}
 
 	if (GestureL == Gestures::Hold)
@@ -421,9 +431,16 @@ void handler_sta_mode_disconnected(WiFiEventStationModeDisconnected evt)
 		WiFiDisconnectedSince_g = millis();
 	}
 
-	DEBUGLOG("Disconnected for %d seconds.\r\n", (int)((millis() - WiFiDisconnectedSince_g) / 1000));
+	int DisconnectedTimeL = (int)((millis() - WiFiDisconnectedSince_g) / 1000);
+
+	DEBUGLOG("Disconnected for %d seconds.\r\n", DisconnectedTimeL);
 
 	Indications.playDisconnectedFromInet();
+
+	if (DisconnectedTimeL >= DISCONNECTED_SECONDS)
+	{
+		shutdown();
+	}
 }
 
 #pragma endregion
@@ -432,6 +449,10 @@ void handler_sta_mode_disconnected(WiFiEventStationModeDisconnected evt)
 
 void shutdown()
 {
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
 	Indications.playShutdown();
 	ESP.deepSleep(40000);
 }

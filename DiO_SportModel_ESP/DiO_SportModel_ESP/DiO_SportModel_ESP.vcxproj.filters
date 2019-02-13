@@ -49,6 +49,9 @@
     <None Include="data\dashboard.js">
       <Filter>data</Filter>
     </None>
+    <None Include="data\update.js">
+      <Filter>data</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="__vm\.DiO_SportModel_ESP.vsarduino.h">

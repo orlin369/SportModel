@@ -128,5 +128,14 @@ SOFTWARE.
 
 #pragma endregion
 
+#pragma region Deep sleep settings
+
+#define NO_ACTION_TIME_OUT 5000
+
+#define DISCONNECTED_SECONDS 60
+
+#pragma endregion
+
+
 #endif
 

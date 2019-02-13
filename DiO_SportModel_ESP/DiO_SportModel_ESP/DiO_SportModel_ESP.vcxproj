@@ -119,6 +119,7 @@
     <None Include="data\spark-md5.js" />
     <None Include="data\style.css" />
     <None Include="data\update.html" />
+    <None Include="data\update.js" />
     <None Include="DiO_SportModel_ESP.ino">
       <FileType>CppCode</FileType>
     </None>
