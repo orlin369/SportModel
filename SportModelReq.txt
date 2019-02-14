@@ -1,0 +1,14 @@
+ - PON
+ - Disable restart.
+ - Check battery statsu.
+ - If battery is less then 10%, display low battery for 5 seconds, enter sleep.
+ - Wait for gesture.
+ - If there is no gesture affter 10 seconds, enter sleep.
+ - Else handle the gesture.
+ - Load FS.
+ - Load configuration file.
+ - If tere is no configuration, create new one with default values.
+ - If gesture is client mode, enter client mode.
+ - If gesture is AP mode, enter AP mode.
+ - If gesture is service mode, enter service mode.
+ 

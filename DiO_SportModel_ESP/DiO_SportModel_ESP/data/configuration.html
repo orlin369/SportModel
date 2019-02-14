@@ -35,6 +35,7 @@ SOFTWARE.
 		<a href="/logout" class="btn btn--s"><strong>Logout</strong></a>
 		<hr>
 		<form action="" method="post">
+			<div>Common</div>
 			<table border="0" cellspacing="0" cellpadding="3" style="width:350px">
 				<tr>
 					<td align="right">FW Version:</td>
@@ -57,6 +58,7 @@ SOFTWARE.
 		</form>
 		<hr>
 		<form action="" method="post">
+			<div>Station Settings</div>
 			<table border="0" cellspacing="0" cellpadding="3" style="width:350px">
 				<tr>
 					<td align="right">SSID:</td>
@@ -104,6 +106,7 @@ SOFTWARE.
 		</form>
 		<hr>
 		<form action="" method="post">
+			<div>Access Point Settings</div>
 			<table border="0" cellspacing="0" cellpadding="3" style="width:350px">
 				<tr>
 					<td align="right">AP Password:</td>
@@ -120,17 +123,17 @@ SOFTWARE.
 		</form>
 		<hr>
 		<form action="" method="post">
+			<div>WEB Settings</div>
 			<table border="0" cellspacing="0" cellpadding="3" style="width:350px">
-
 				<tr>
-					<td align="right">WEB User:</td>
+					<td align="right">User:</td>
 					<td>
 						<input type="text" id="HTTPUsername" name="HTTPUsername" value="">
 					</td>
 				</tr>
 
 				<tr>
-					<td align="right">WEB Passord:</td>
+					<td align="right">Password:</td>
 					<td>
 						<input type="password" id="HTTPPassword" name="HTTPPassword" value="">
 					</td>
@@ -139,6 +142,35 @@ SOFTWARE.
 					<td align="right">Authentication:</td>
 					<td>
 						<input type="checkbox" id="HTTPAuthentication" name="HTTPAuthentication">
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" align="center">
+						<input type="submit" style="width:150px" class="btn btn--m btn--blue" value="Save">
+					</td>
+				</tr>
+			</table>
+		</form>
+		<hr>
+		<form action="" method="post">
+			<div>Cayenne Settings</div>
+			<table border="0" cellspacing="0" cellpadding="3" style="width:350px">
+				<tr>
+					<td align="right">User:</td>
+					<td>
+						<input type="text" id="CayenneUsername" name="CayenneUsername" value="">
+					</td>
+				</tr>
+				<tr>
+					<td align="right">Password:</td>
+					<td>
+						<input type="password" id="CayennePassword" name="CayennePassword" value="">
+					</td>
+				</tr>
+				<tr>
+					<td align="right">ID:</td>
+					<td>
+						<input type="text" id="CayenneClientID" name="CayenneClientID" value="">
 					</td>
 				</tr>
 				<tr>
