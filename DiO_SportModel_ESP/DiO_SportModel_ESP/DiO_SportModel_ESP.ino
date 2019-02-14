@@ -90,6 +90,8 @@ unsigned long OnlineTime_g;
 
 unsigned long PreviousTime_g;
 
+bool IsConnectedToInternet_g = false;
+
 #endif
 
 #pragma endregion
@@ -165,13 +167,17 @@ void setup()
 		configure_to_sta();
 
 #ifdef ENABLE_CAYENNE_MODE
-		DEBUGLOG("CayenneUsername: %s\r\n", DeviceConfiguration.CayenneUsername.c_str());
-		DEBUGLOG("CayennePassword: %s\r\n", DeviceConfiguration.CayennePassword.c_str());
-		DEBUGLOG("CayenneClientID: %s\r\n", DeviceConfiguration.CayenneClientID.c_str());
 
-		Cayenne.begin(DeviceConfiguration.CayenneUsername.c_str(),
-			DeviceConfiguration.CayennePassword.c_str(),
-			DeviceConfiguration.CayenneClientID.c_str());
+		if (IsConnectedToInternet_g)
+		{
+			DEBUGLOG("CayenneUsername: %s\r\n", DeviceConfiguration.CayenneUsername.c_str());
+			DEBUGLOG("CayennePassword: %s\r\n", DeviceConfiguration.CayennePassword.c_str());
+			DEBUGLOG("CayenneClientID: %s\r\n", DeviceConfiguration.CayenneClientID.c_str());
+
+			Cayenne.begin(DeviceConfiguration.CayenneUsername.c_str(),
+				DeviceConfiguration.CayennePassword.c_str(),
+				DeviceConfiguration.CayenneClientID.c_str());
+		}
 #endif // ENABLE_CAYENNE_MODE
 
 	}
@@ -197,10 +203,17 @@ void loop()
 
 	if (AppMode_g == ApplicationMode::NormalOperation)
 	{
+		if (IsConnectedToInternet_g == false)
+		{
+			configure_to_sta();
+		}
 
 #ifdef ENABLE_CAYENNE_MODE
 
-		Cayenne.loop();
+		if (IsConnectedToInternet_g)
+		{
+			Cayenne.loop();
+		}
 
 #endif // ENABLE_CAYENNE_MODE
 
@@ -398,6 +411,7 @@ void handler_sta_mode_connected(WiFiEventStationModeConnected evt)
 	DEBUGLOG("Waiting for DHCP\r\n");
 
 	WiFiDisconnectedSince_g = 0;
+	IsConnectedToInternet_g = false;
 }
 
 /** @brief Handler that execute when the device got IP.
@@ -415,7 +429,7 @@ void handler_sta_mode_got_ip(WiFiEventStationModeGotIP evt)
 	DEBUGLOG("DNS:           %s\r\n", WiFi.dnsIP().toString().c_str());
 
 	WiFiDisconnectedSince_g = 0;
-
+	IsConnectedToInternet_g = true;
 	Indications.playConnectedToInet();
 }
 
@@ -438,6 +452,7 @@ void handler_sta_mode_disconnected(WiFiEventStationModeDisconnected evt)
 	DEBUGLOG("Disconnected for %d seconds.\r\n", DisconnectedTimeL);
 
 	Indications.playDisconnectedFromInet();
+	IsConnectedToInternet_g = false;
 
 	if (DisconnectedTimeL >= DISCONNECTED_SECONDS)
 	{
