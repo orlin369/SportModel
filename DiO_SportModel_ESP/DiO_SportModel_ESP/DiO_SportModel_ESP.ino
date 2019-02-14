@@ -165,21 +165,6 @@ void setup()
 		Indications.playNormalOperationMode();
 
 		configure_to_sta();
-
-#ifdef ENABLE_CAYENNE_MODE
-
-		if (IsConnectedToInternet_g)
-		{
-			DEBUGLOG("CayenneUsername: %s\r\n", DeviceConfiguration.CayenneUsername.c_str());
-			DEBUGLOG("CayennePassword: %s\r\n", DeviceConfiguration.CayennePassword.c_str());
-			DEBUGLOG("CayenneClientID: %s\r\n", DeviceConfiguration.CayenneClientID.c_str());
-
-			Cayenne.begin(DeviceConfiguration.CayenneUsername.c_str(),
-				DeviceConfiguration.CayennePassword.c_str(),
-				DeviceConfiguration.CayenneClientID.c_str());
-		}
-#endif // ENABLE_CAYENNE_MODE
-
 	}
 	else if (AppMode_g == ApplicationMode::Configuriation)
 	{
@@ -424,13 +409,28 @@ void handler_sta_mode_got_ip(WiFiEventStationModeGotIP evt)
 	DEBUGLOG(__PRETTY_FUNCTION__);
 	DEBUGLOG("\r\n");
 
-	DEBUGLOG("GotIP Address: %s\r\n", WiFi.localIP().toString().c_str());
-	DEBUGLOG("Gateway:       %s\r\n", WiFi.gatewayIP().toString().c_str());
-	DEBUGLOG("DNS:           %s\r\n", WiFi.dnsIP().toString().c_str());
+	DEBUGLOG("IP Address:      %s\r\n", WiFi.localIP().toString().c_str());
+	DEBUGLOG("Gateway:         %s\r\n", WiFi.gatewayIP().toString().c_str());
+	DEBUGLOG("DNS:             %s\r\n", WiFi.dnsIP().toString().c_str());
 
 	WiFiDisconnectedSince_g = 0;
 	IsConnectedToInternet_g = true;
 	Indications.playConnectedToInet();
+
+#ifdef ENABLE_CAYENNE_MODE
+
+	DEBUGLOG("CayenneUsername: %s\r\n", DeviceConfiguration.CayenneUsername.c_str());
+	DEBUGLOG("CayennePassword: %s\r\n", DeviceConfiguration.CayennePassword.c_str());
+	DEBUGLOG("CayenneClientID: %s\r\n", DeviceConfiguration.CayenneClientID.c_str());
+
+	Cayenne.begin(DeviceConfiguration.CayenneUsername.c_str(),
+		DeviceConfiguration.CayennePassword.c_str(),
+		DeviceConfiguration.CayenneClientID.c_str());
+
+	Cayenne.publishDeviceInfo();
+
+#endif // ENABLE_CAYENNE_MODE
+
 }
 
 /** @brief Handler that execute when the device is disconnected.
@@ -450,7 +450,7 @@ void handler_sta_mode_disconnected(WiFiEventStationModeDisconnected evt)
 	int DisconnectedTimeL = (int)((millis() - WiFiDisconnectedSince_g) / 1000);
 
 	DEBUGLOG("Disconnected for %d seconds.\r\n", DisconnectedTimeL);
-
+	
 	Indications.playDisconnectedFromInet();
 	IsConnectedToInternet_g = false;
 
