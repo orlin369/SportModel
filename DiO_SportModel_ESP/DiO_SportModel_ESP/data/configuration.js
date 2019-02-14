@@ -23,7 +23,7 @@ SOFTWARE.
 */
 
 function setSSID(value) {
-    document.getElementById("ssid").value = value;
+    document.getElementById("STASSID").value = value;
 }
 
 function setSecurityString(security) {
