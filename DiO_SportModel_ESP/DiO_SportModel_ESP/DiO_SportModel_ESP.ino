@@ -24,7 +24,6 @@ SOFTWARE.
 
 #pragma region Headres
 
-#include "Notes.h"
 #include "ApplicationConfiguration.h"
 
 #include "DebugPort.h"
@@ -33,6 +32,12 @@ SOFTWARE.
 #include <FS.h>
 #include <WiFiClient.h>
 #include <ESP8266HTTPClient.h>
+
+#ifdef ENABLE_SELF_OTA
+
+#include <ESP8266httpUpdate.h>
+
+#endif // ENABLE_SELF_OTA
 
 #ifdef ENABLE_OTA_ARDUINO
 
@@ -50,7 +55,7 @@ SOFTWARE.
 
 #include "GeneralHelper.h"
 #include "DeviceConfiguration.h"
-#include "Indications.h"
+#include "Notes.h"
 #include "Indications.h"
 #include "ApplicationMode.h"
 #include "ButtonGesture.h"
@@ -105,6 +110,15 @@ void configure_file_system();
 void configure_to_sta();
 
 void shutdown();
+
+#ifdef ENABLE_SELF_OTA
+
+/** @brief Check for updates.
+ *  @return Void.
+ */
+void check_update();
+
+#endif // ENABLE_SELF_OTA
 
 #pragma endregion
 
@@ -224,7 +238,7 @@ void device_properties()
 	DEBUGLOG("Sketch size: %u\r\n", ESP.getSketchSize());
 	DEBUGLOG("Free flash space: %u\r\n", ESP.getFreeSketchSpace());
 	DEBUGLOG("Free heap: %d\r\n", ESP.getFreeHeap());
-	DEBUGLOG("Firmware version: %d\r\n", ESP_FW_VERSION);
+	DEBUGLOG("Firmware version: %d\r\n", FW_VERSION);
 	DEBUGLOG("SDK version: %s\r\n", ESP.getSdkVersion());
 	uint8 c_MACL[WL_MAC_ADDR_LENGTH];
 	WiFi.macAddress(c_MACL);
@@ -250,7 +264,8 @@ void configure_file_system()
 		for (;;) {}
 	}
 
-#ifndef RELEASE
+#ifdef EANBLE_DEBUG_OUT
+
 	// List files
 	Dir dir = SPIFFS.openDir("/");
 	while (dir.next()) {
@@ -259,7 +274,8 @@ void configure_file_system()
 		DEBUGLOG("FS File: %s, size: %s\r\n", fileName.c_str(), formatBytes(fileSize).c_str());
 	}
 	DEBUGLOG("\r\n");
-#endif // RELEASE
+
+#endif // EANBLE_DEBUG_OUT
 }
 
 #pragma endregion
@@ -473,6 +489,85 @@ void shutdown()
 	Indications.playShutdown();
 	ESP.deepSleep(40000);
 }
+
+#pragma endregion
+
+#pragma region OTA Updates
+
+#ifdef ENABLE_SELF_OTA
+
+/** @brief Check for updates.
+ *  @return Void.
+ */
+void check_update()
+{
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
+	uint8 c_MACL[WL_MAC_ADDR_LENGTH];
+	WiFi.macAddress(c_MACL);
+	String MACL = mac2str(c_MACL);
+
+	String BinariImageUrlL = String(SERVER_DOMAIN) + String(UPDATE_SERVER_PATH);
+	String FwVersUrlL = String(SERVER_DOMAIN) + String(VERSION_SERVER_PATH);
+
+	DEBUGLOG("Checking for firmware updates.\r\n");
+	DEBUGLOG("MAC address: %s\r\n", MACL.c_str());
+	DEBUGLOG("Firmware version URL: %s\r\n", FwVersUrlL.c_str());
+
+	HTTPClient HttpClientL;
+
+	int StatusCodeL;
+
+	HttpClientL.begin(FwVersUrlL);
+	StatusCodeL = HttpClientL.GET();
+
+	if (StatusCodeL == 200)
+	{
+		String NewFwVersionL = HttpClientL.getString();
+		int VersionNumberL = NewFwVersionL.toInt();
+
+		DEBUGLOG("Current   firmware version: %d\r\n", FW_VERSION);
+		DEBUGLOG("Available firmware version: %d\r\n", VersionNumberL);
+
+		if (VersionNumberL != FW_VERSION)
+		{
+			DEBUGLOG("Preparing to update\r\n");
+			DEBUGLOG("Binary file URL : %s\r\n", BinariImageUrlL.c_str());
+
+			t_httpUpdate_return ResponseL = ESPhttpUpdate.update(BinariImageUrlL, String(FW_VERSION));
+
+			switch (ResponseL)
+			{
+				case HTTP_UPDATE_FAILED:
+					DEBUGLOG("HTTP_UPDATE_FAILD Error (%d): %s\r\n",
+						ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+					break;
+
+				case HTTP_UPDATE_NO_UPDATES:
+					DEBUGLOG("HTTP_UPDATE_NO_UPDATES\r\n");
+					break;
+
+				case HTTP_UPDATE_OK:
+					DEBUGLOG("HTTP_UPDATE_OK\r\n");
+					break;
+			}
+		}
+		else
+		{
+			DEBUGLOG("Already on latest version.\r\n");
+		}
+	}
+	else
+	{
+		DEBUGLOG("Firmware version check failed, got HTTP response code %d\r\n", StatusCodeL);
+	}
+
+	HttpClientL.end();
+}
+
+#endif // ENABLE_SELF_OTA
 
 #pragma endregion
 

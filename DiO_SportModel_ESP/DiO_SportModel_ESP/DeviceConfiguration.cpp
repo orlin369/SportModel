@@ -66,11 +66,13 @@ bool load_device_configuration(FS* fileSystem) {
 		DEBUGLOG("Failed to parse config file\r\n");
 		return false;
 	}
+	
+#ifdef EANBLE_DEBUG_OUT
 
-#ifndef RELEASE
 	String temp;
 	json.prettyPrintTo(temp);
 	DEBUGLOG("%s\r\n", temp.c_str());
+
 #endif
 
 	DeviceConfiguration.STASSID = json["STASSID"].as<const char *>();
@@ -157,11 +159,13 @@ bool save_device_configuration(FS* fileSystem) {
 		return false;
 	}
 
-#ifndef RELEASE
+#ifdef EANBLE_DEBUG_OUT
+
 	String temp;
 	json.prettyPrintTo(temp);
 	DEBUGLOG("%s\r\n", temp.c_str());
-#endif
+
+#endif // EANBLE_DEBUG_OUT
 
 	json.printTo(configFile);
 	configFile.flush();

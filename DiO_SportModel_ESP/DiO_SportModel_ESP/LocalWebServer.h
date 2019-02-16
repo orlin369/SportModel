@@ -120,7 +120,7 @@ class LocalWebServerClass : public AsyncWebServer
 
 #endif // ENABLE_WEB_EDITOR
 
-#ifdef ENABLE_OTA_HTTP
+#ifdef ENABLE_WEB_OTA
 
 	 /** @brief Set MD5 sum of the new firmware. Part of the API.
 	 *  @param request, AsyncWebServer Request request object.
@@ -145,7 +145,7 @@ class LocalWebServerClass : public AsyncWebServer
 	 */
 	 void sendUpdateFWValues(AsyncWebServerRequest *request);
 
-#endif // ENABLE_OTA_HTTP
+#endif // ENABLE_WEB_OTA
 
 #ifdef ENABLE_OTA_ARDUINO
 

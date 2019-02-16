@@ -200,7 +200,7 @@ void LocalWebServerClass::addHandlers() {
 
 #pragma region Firmware update API
 
-#ifdef ENABLE_OTA_HTTP
+#ifdef ENABLE_WEB_OTA
 
 	// Update the firmware.
 	on("/update", HTTP_GET, [this](AsyncWebServerRequest *request) {
@@ -239,7 +239,7 @@ void LocalWebServerClass::addHandlers() {
 		this->setUpdateMD5(request);
 	});
 
-#endif // ENABLE_OTA_HTTP
+#endif // ENABLE_WEB_OTA
 
 #ifdef ENABLE_OTA_ARDUINO
 
@@ -771,9 +771,9 @@ void LocalWebServerClass::configureOTA(String password) {
 
 #endif // ENABLE_OTA_ARDUINO
 
-#pragma region ENABLE_OTA_HTTP
+#pragma region ENABLE_WEB_OTA
 
-#ifdef ENABLE_OTA_HTTP
+#ifdef ENABLE_WEB_OTA
 
 /** @brief Set MD5 sum of the new firmware. Part of the API.
  *  @param request, AsyncWebServer Request request object.
@@ -950,12 +950,11 @@ void LocalWebServerClass::sendNetworks(AsyncWebServerRequest *request)
  *  @param request, AsyncWebServerRequest request object.
  *  @return Void.
  */
-void LocalWebServerClass::sendConnectionState(AsyncWebServerRequest *request) {
-#ifndef RELEASE
+void LocalWebServerClass::sendConnectionState(AsyncWebServerRequest *request)
+{
 	DEBUGLOG("\r\n");
 	DEBUGLOG(__PRETTY_FUNCTION__);
 	DEBUGLOG("\r\n");
-#endif // !RELEASE
 
 	String state = "N/A";
 	String Networks = "";
@@ -984,14 +983,12 @@ void LocalWebServerClass::sendConnectionState(AsyncWebServerRequest *request) {
  */
 void LocalWebServerClass::sendConfiguration(AsyncWebServerRequest *request)
 {
-#ifndef RELEASE
 	DEBUGLOG("\r\n");
 	DEBUGLOG(__PRETTY_FUNCTION__);
 	DEBUGLOG("\r\n");
-#endif // !RELEASE
 
 	String values = "";
-	values += "FWVersion|" + String(ESP_FW_VERSION) + "|div\n";
+	values += "FWVersion|" + String(FW_VERSION) + "|div\n";
 	values += "DeviceName|" + (String)DeviceConfiguration.DeviceName + "|input\n";
 	values += "STASSID|" + (String)DeviceConfiguration.STASSID + "|input\n";
 	values += "HTTPUsername|" + (String)DeviceConfiguration.HTTPUsername + "|input\n";

@@ -39,7 +39,7 @@ SOFTWARE.
 #define DEVICE_BRAND "Sport Model"
 
 /** @brief Firmware version string. */
-#define ESP_FW_VERSION 1
+#define FW_VERSION 1
 
 #define EANBLE_DEBUG_OUT
 
@@ -47,7 +47,9 @@ SOFTWARE.
 
 //#define ENABLE_OTA_ARDUINO
 
-#define ENABLE_OTA_HTTP
+#define ENABLE_WEB_OTA
+
+#define ENABLE_SELF_OTA
 
 #define ENABLE_CAYENNE_MODE
 
@@ -133,6 +135,18 @@ SOFTWARE.
 #define NO_ACTION_TIME_OUT 5000
 
 #define DISCONNECTED_SECONDS 60
+
+#pragma endregion
+
+#pragma region OTA Updates
+
+#define SERVER_DOMAIN "http://sport.mode.com"
+
+/** @brief Updatest root endpoint. */
+#define UPDATE_SERVER_PATH "api/v1/sport_model/fota/update"
+
+/** @brief Version root endpoint. */
+#define VERSION_SERVER_PATH "api/v1/sport_model/fota/version"
 
 #pragma endregion
 
