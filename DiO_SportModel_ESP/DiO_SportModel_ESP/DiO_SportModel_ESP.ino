@@ -24,10 +24,18 @@ SOFTWARE.
 
 #pragma region Headres
 
+// Aditional functionalities.
 #include "ApplicationConfiguration.h"
-
 #include "DebugPort.h"
+#include "GeneralHelper.h"
+#include "DeviceConfiguration.h"
+#include "Notes.h"
+#include "Indications.h"
+#include "ApplicationMode.h"
+#include "ButtonGesture.h"
+#include "LocalWebServer.h"
 
+// Builtin functionalities.
 #include <ESP8266WiFi.h>
 #include <FS.h>
 #include <WiFiClient.h>
@@ -53,18 +61,11 @@ SOFTWARE.
 
 #endif // ENABLE_CAYENNE_MODE
 
-#include "GeneralHelper.h"
-#include "DeviceConfiguration.h"
-#include "Notes.h"
-#include "Indications.h"
-#include "ApplicationMode.h"
-#include "ButtonGesture.h"
-#include "LocalWebServer.h"
-
 #pragma endregion
 
 #pragma region Variables
 
+/* @brief Application mode. */
 ApplicationMode AppMode_g = ApplicationMode::Idle;
 
 /* @brief WiFi mode. */
@@ -90,11 +91,13 @@ WiFiEventHandler OnAPModeStationDisconnectedHandle_g;
 
 #ifdef ENABLE_CAYENNE_MODE
 
-/* @brief On AP mode station disconnected. */
+/* @brief On AP mode station disconnected current time. */
 unsigned long OnlineTime_g;
 
+/* @brief On AP mode station disconnected previous time. */
 unsigned long PreviousTime_g;
 
+/* @brief Is connected to internet flag. */
 bool IsConnectedToInternet_g = false;
 
 #endif
