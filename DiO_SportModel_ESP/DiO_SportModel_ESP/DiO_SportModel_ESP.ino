@@ -103,12 +103,59 @@ bool IsConnectedToInternet_g = false;
 
 #pragma region Prototypes
 
+/** @brief Printout in the debug console device status.
+ *  @return Void.
+ */
 void device_properties();
 
+/** @brief Configure the file system.
+ *  @return Void.
+ */
 void configure_file_system();
 
+/** @brief Configure WiFi module to access point.
+ *  @return Void.
+ */
+void configure_to_ap();
+
+/** @brief Handler that execute when client is connected.
+ *  @param const WiFiEventSoftAPModeStationConnected& evt, Callback handler
+ *  @return Void.
+ */
+void handler_ap_mode_station_connected(const WiFiEventSoftAPModeStationConnected& evt);
+
+/** @brief Handler that execute when client is disconnected.
+ *  @param const WiFiEventSoftAPModeStationDisconnected& evt, Callback handler
+ *  @return Void.
+ */
+void handler_ap_mode_station_disconnected(const WiFiEventSoftAPModeStationDisconnected& evt);
+
+/** @brief Configure WiFi module to station.
+ *  @return Void.
+ */
 void configure_to_sta();
 
+/** @brief Handler that execute when the device is connected.
+ *  @param evt WiFiEventStationModeConnected, Data object.
+ *  @return Void.
+ */
+void handler_sta_mode_connected(WiFiEventStationModeConnected evt);
+
+/** @brief Handler that execute when the device got IP.
+ *  @param evt WiFiEventStationModeGotIP, Callback handler.
+ *  @return Void.
+ */
+void handler_sta_mode_got_ip(WiFiEventStationModeGotIP evt);
+
+/** @brief Handler that execute when the device is disconnected.
+ *  @param evt WiFiEventStationModeDisconnected, Callback handler.
+ *  @return Void.
+ */
+void handler_sta_mode_disconnected(WiFiEventStationModeDisconnected evt);
+
+/** @brief Software shutdown procedure.
+ *  @return Void.
+ */
 void shutdown();
 
 #ifdef ENABLE_SELF_OTA
@@ -246,8 +293,6 @@ void device_properties()
 	DEBUGLOG("MAC address: %s\r\n", MACL.c_str());
 }
 
-#pragma region File System
-
 /** @brief Configure the file system.
  *  @param fileSystem FS, File system object.
  *  @return Void.
@@ -277,8 +322,6 @@ void configure_file_system()
 
 #endif // EANBLE_DEBUG_OUT
 }
-
-#pragma endregion
 
 #pragma region AP mode
 
@@ -478,8 +521,6 @@ void handler_sta_mode_disconnected(WiFiEventStationModeDisconnected evt)
 
 #pragma endregion
 
-#pragma region Shutdown
-
 void shutdown()
 {
 	DEBUGLOG("\r\n");
@@ -489,8 +530,6 @@ void shutdown()
 	Indications.playShutdown();
 	ESP.deepSleep(40000);
 }
-
-#pragma endregion
 
 #pragma region OTA Updates
 
