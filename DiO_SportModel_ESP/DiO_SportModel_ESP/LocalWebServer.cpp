@@ -363,7 +363,7 @@ void LocalWebServerClass::addHandlers() {
 			return;
 		}
 
-		//this->saveConfiguration(request);
+		this->saveConfiguration(request);
 	});
 	
 #pragma endregion

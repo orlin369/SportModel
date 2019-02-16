@@ -326,7 +326,7 @@ void handler_ap_mode_station_disconnected(const WiFiEventSoftAPModeStationDiscon
 	DEBUGLOG("Station disconnected: %s\r\n", mac2str(evt.mac).c_str());
 	Indications.playDisconnectedFromService();
 
-	shutdown();
+	//shutdown();
 }
 
 #pragma endregion
