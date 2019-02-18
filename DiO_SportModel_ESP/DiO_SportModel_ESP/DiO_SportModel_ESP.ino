@@ -172,6 +172,9 @@ void check_update();
 
 #pragma endregion
 
+/** @brief Setup function.
+ *  @return Void.
+ */
 void setup()
 {
 	configure_debug_port();
@@ -240,7 +243,9 @@ void setup()
 	}
 }
 
-// the loop function runs over and over again until power down or reset
+/** @brief Loop function.
+ *  @return Void.
+ */
 void loop()
 {
 	int GestureL = ButtonGesture.check();
