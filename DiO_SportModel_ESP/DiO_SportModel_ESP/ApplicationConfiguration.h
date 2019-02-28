@@ -63,6 +63,8 @@ SOFTWARE.
 
 #define PIN_BUZZER D1
 
+#define PIN_ACTUATOR D3
+
 #define PWM_FREQ 800
 
 #define PWM_RANGE 100

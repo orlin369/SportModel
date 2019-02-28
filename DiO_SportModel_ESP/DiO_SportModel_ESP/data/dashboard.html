@@ -21,21 +21,35 @@ SOFTWARE.
 -->
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta name="viewport" content="width=device-width, initial-scale=1"/>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-		<link rel="stylesheet" href="style.css" type="text/css"/>
-		<title>Sport Model</title>
-	</head>
-	<body id="index" style="margin:0; padding:0;">
-		<a href="/dashboard" class="btn btn--s active"><strong>Dashboard</strong></a>
-		<a href="/config" class="btn btn--s"><strong>Configuration</strong></a>
-		<a href="/update" class="btn btn--s"><strong>Update</strong></a>
-		<a href="/logout" class="btn btn--s"><strong>Logout</strong></a>
-		<hr>
-		Content
-
-		<script src="microajax.js"></script>
-		<script src="dashboard.js"></script>
-	</body>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <link rel="stylesheet" href="style.css" type="text/css"/>
+        <title>Sport Model</title>
+    </head>
+    <body id="index" style="margin:0; padding:0;">
+        <a href="/dashboard" class="btn btn--s active"><strong>Dashboard</strong></a>
+        <a href="/config" class="btn btn--s"><strong>Configuration</strong></a>
+        <a href="/update" class="btn btn--s"><strong>Update</strong></a>
+        <a href="/logout" class="btn btn--s"><strong>Logout</strong></a>
+        <hr>
+        <div>Content</div>
+        <hr>
+        <table border="0" cellspacing="0" cellpadding="3" style="width:350px">
+            <tr>
+                <td align="right">Actuator:</td>
+                <td>
+                    <input type="range" min="0" max="100" step="1" value="0" class="slider" id="actuator-value" onchange="on_change_actuator()">
+                </td>
+            </tr>
+            <tr>
+                <td align="right">Value:</td>
+                <td>
+                    <div id="actuator-display-value">0</div>
+                </td>
+            </tr>
+        </table>
+        <script src="microajax.js"></script>
+        <script src="dashboard.js"></script>
+    </body>
 </html>

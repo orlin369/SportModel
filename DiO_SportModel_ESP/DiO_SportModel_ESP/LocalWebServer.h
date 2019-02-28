@@ -75,6 +75,9 @@ class LocalWebServerClass : public AsyncWebServer
 	 /* @brief Size of the firmware. */
 	 uint32_t _updateSize = 0;
 
+	 /** @brief Callback function. */
+	 void(*callbackSetActuator)(uint8);
+
 #pragma endregion
 
 #pragma region Methods
@@ -230,6 +233,11 @@ class LocalWebServerClass : public AsyncWebServer
 	  */
 	 void handle();
 
+	 /** @brief Set actuator callback. Part of the API.
+      *  @param callback, Actuator set function.
+      *  @return Void.
+      */
+	 void setActuatorCallback(void(*callback)(uint8));
 };
 
 extern LocalWebServerClass LocalWebServer;

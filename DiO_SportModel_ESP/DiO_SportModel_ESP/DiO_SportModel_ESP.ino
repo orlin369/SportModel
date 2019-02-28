@@ -25,6 +25,7 @@ SOFTWARE.
 #pragma region Headres
 
 // Aditional functionalities.
+#include "Actuator.h"
 #include "ApplicationConfiguration.h"
 #include "DebugPort.h"
 #include "GeneralHelper.h"
@@ -187,11 +188,7 @@ void setup()
 	// Start the file system.
 	configure_file_system();
 
-	// Config PWM Range.
-	analogWriteRange(PWM_RANGE);
-
-	// Config PWM frequency.
-	analogWriteFreq(PWM_FREQ);
+	Actuator.configure();
 
 	// Try to load configuration from file system.
 	if (!load_device_configuration(&SPIFFS))
@@ -246,6 +243,7 @@ void setup()
 		configure_to_ap();
 		
 		LocalWebServer.configure(&SPIFFS);
+		LocalWebServer.setActuatorCallback(Actuator.setValue);
 	}
 }
 

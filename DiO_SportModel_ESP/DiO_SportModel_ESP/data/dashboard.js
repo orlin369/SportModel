@@ -22,6 +22,33 @@ SOFTWARE.
 
 */
 
+function actuator_response(res) {
+    var actuator_data;
+    
+    if (!res || (res.target.responseText == '[]')) {
+        setTimeout(function () { getSlaveDevicesList(); }, 5000);
+        return;
+    }
+    
+    actuator_data = JSON.parse(res.target.responseText);
+    
+    console.log(actuator_data);
+}
+
+function on_change_actuator()
+{
+    var actuator_value = document.getElementById("actuator-value").value;
+    document.getElementById("actuator-display-value").innerHTML = actuator_value;
+    
+    request = new XMLHttpRequest();
+    
+    if (request) {
+        request.open('GET', '/api/v1/actuator?actuator_value=' + actuator_value, true);
+        request.addEventListener('load', actuator_response);
+        request.send();
+    }
+}
+
 window.onload = function () {
 
 }

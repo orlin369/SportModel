@@ -438,6 +438,40 @@ void LocalWebServerClass::addHandlers() {
 		ESP.restart();
 	});
 
+	// Restart the chip.
+	on("/api/v1/actuator", HTTP_GET, [this](AsyncWebServerRequest *request)
+	{
+		DEBUGLOG("%s\r\n", request->url().c_str());
+
+		if (!this->checkAuth(request))
+		{
+			request->requestAuthentication();
+			return;
+		}
+		if (request->args() > 0)  // Save Settings
+		{
+			for (uint8 index = 0; index < request->args(); index++)
+			{
+				DEBUGLOG("Arg %s: %s\r\n", request->argName(index).c_str(), urlDecode(request->arg(index)).c_str());
+
+				if (request->argName(index) == "actuator_value")
+				{
+					String value = urlDecode(request->arg(index));
+					DEBUGLOG("Actuator Value: %s\r\n", value.c_str());
+					
+					if (callbackSetActuator != nullptr)
+					{
+						callbackSetActuator(value.toInt());
+					}
+
+					continue;
+				}
+
+			}
+		}
+	});
+
+
 #pragma endregion
 
 #pragma region Page not found API
@@ -1145,6 +1179,12 @@ void LocalWebServerClass::saveConfiguration(AsyncWebServerRequest *request)
 		request->send(404, "text/plain", "FileNotFound");
 		return;
 	}
+}
+
+
+void LocalWebServerClass::setActuatorCallback(void(*callback)(uint8))
+{
+	callbackSetActuator = callback;
 }
 
 #pragma endregion
