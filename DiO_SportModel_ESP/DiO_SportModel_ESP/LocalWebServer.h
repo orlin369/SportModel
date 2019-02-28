@@ -60,7 +60,6 @@ SOFTWARE.
 
 #pragma endregion
 
-
 class LocalWebServerClass : public AsyncWebServer
 {
  protected:

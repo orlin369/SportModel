@@ -187,6 +187,12 @@ void setup()
 	// Start the file system.
 	configure_file_system();
 
+	// Config PWM Range.
+	analogWriteRange(PWM_RANGE);
+
+	// Config PWM frequency.
+	analogWriteFreq(PWM_FREQ);
+
 	// Try to load configuration from file system.
 	if (!load_device_configuration(&SPIFFS))
 	{

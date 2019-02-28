@@ -63,6 +63,10 @@ SOFTWARE.
 
 #define PIN_BUZZER D1
 
+#define PWM_FREQ 800
+
+#define PWM_RANGE 100
+
 #pragma endregion
 
 #pragma region Debug Port
