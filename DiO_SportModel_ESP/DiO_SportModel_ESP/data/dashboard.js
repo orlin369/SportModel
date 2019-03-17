@@ -32,12 +32,14 @@ function actuator_response(res) {
     
     actuator_data = JSON.parse(res.target.responseText);
     
-    console.log(actuator_data);
+    console.log(actuator_data.value);
+
+    document.getElementById("actuator-display-value").innerHTML = actuator_data.value;
 }
 
 function on_change_actuator() {
     var actuator_value = document.getElementById("actuator-value").value;
-    document.getElementById("actuator-display-value").innerHTML = actuator_value;
+    //document.getElementById("actuator-display-value").innerHTML = actuator_value;
     
     request = new XMLHttpRequest();
     
