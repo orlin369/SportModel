@@ -59,6 +59,7 @@ class IndicationsClass
 	void playConnectedToService();
 	void playDisconnectedFromInet();
 	void playDisconnectedFromService();
+	void setLed(int value);
 };
 
 extern IndicationsClass Indications;

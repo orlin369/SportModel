@@ -13,6 +13,8 @@
 
 #include "ApplicationConfiguration.h"
 
+#include "DebugPort.h"
+
 #pragma endregion
 
 

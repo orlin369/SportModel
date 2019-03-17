@@ -442,6 +442,9 @@ void LocalWebServerClass::addHandlers() {
 	on("/api/v1/actuator", HTTP_GET, [this](AsyncWebServerRequest *request)
 	{
 		DEBUGLOG("%s\r\n", request->url().c_str());
+		String ValueL = "0";
+		String BatteryL = "0";
+		String JsonL = "";
 
 		if (!this->checkAuth(request))
 		{
@@ -456,12 +459,12 @@ void LocalWebServerClass::addHandlers() {
 
 				if (request->argName(index) == "actuator_value")
 				{
-					String value = urlDecode(request->arg(index));
-					DEBUGLOG("Actuator Value: %s\r\n", value.c_str());
+					ValueL = urlDecode(request->arg(index));
+					DEBUGLOG("Actuator Value: %s\r\n", ValueL.c_str());
 					
 					if (callbackSetActuator != nullptr)
 					{
-						callbackSetActuator(value.toInt());
+						callbackSetActuator(ValueL.toInt());
 					}
 
 					continue;
@@ -469,6 +472,13 @@ void LocalWebServerClass::addHandlers() {
 
 			}
 		}
+
+		JsonL += "{";
+		JsonL += "\"value\":\"" + ValueL + "\"";
+		JsonL += ",\"battery\":\"" + BatteryL + "\"";
+		JsonL += "}";
+
+		request->send(200, "text/json", JsonL);
 	});
 
 
@@ -1180,7 +1190,6 @@ void LocalWebServerClass::saveConfiguration(AsyncWebServerRequest *request)
 		return;
 	}
 }
-
 
 void LocalWebServerClass::setActuatorCallback(void(*callback)(uint8))
 {

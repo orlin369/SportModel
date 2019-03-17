@@ -27,11 +27,34 @@ SOFTWARE.
 void IndicationsClass::configure()
 {
 	pinMode(PIN_BUZZER, OUTPUT);
-	pinMode(PIN_LED, OUTPUT);
+
+	//pinMode(PIN_LED, OUTPUT);
+
+	// Config PWM Range.
+	//analogWriteRange(PWM_RANGE);
+
+	// Config PWM frequency.
+	//analogWriteFreq(PWM_FREQ);
+
+	// Shutdown the LED.
+	analogWrite(PIN_LED, 0);
+}
+
+void IndicationsClass::setLed(int value)
+{
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
+	analogWrite(PIN_LED, value);
 }
 
 void IndicationsClass::playNote(long frequency, long length)
 {
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
 	long delayValue = 1000000 / frequency / 2; // calculate the delay value between transitions
 	// 1 second's worth of microseconds, divided by the frequency, then split in half since
 	// there are two phases to each cycle
@@ -51,41 +74,73 @@ void IndicationsClass::playNote(long frequency, long length)
 
 void IndicationsClass::playNormalOperationMode()
 {
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
 	// TODO: Create song.
 }
 
 void IndicationsClass::playConfigurationMode()
 {
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
 	// TODO: Create song.
 }
 
 void IndicationsClass::playShutdown()
 {
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
 	// TODO: Create song.
 }
 
 void IndicationsClass::playError()
 {
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
 	// TODO: Create song.
 }
 
 void IndicationsClass::playConnectedToInet()
 {
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
 	// TODO: Create song.
 }
 
 void IndicationsClass::playConnectedToService()
 {
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
 	// TODO: Create song.
 }
 
 void IndicationsClass::playDisconnectedFromInet()
 {
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
 	// TODO: Create song.
 }
 
 void IndicationsClass::playDisconnectedFromService()
 {
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
 	// TODO: Create song.
 }
 

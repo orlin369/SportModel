@@ -26,7 +26,7 @@ function actuator_response(res) {
     var actuator_data;
     
     if (!res || (res.target.responseText == '[]')) {
-        setTimeout(function () { getSlaveDevicesList(); }, 5000);
+        setTimeout(function () { on_change_actuator(); }, 5000);
         return;
     }
     
@@ -35,8 +35,7 @@ function actuator_response(res) {
     console.log(actuator_data);
 }
 
-function on_change_actuator()
-{
+function on_change_actuator() {
     var actuator_value = document.getElementById("actuator-value").value;
     document.getElementById("actuator-display-value").innerHTML = actuator_value;
     
@@ -50,5 +49,5 @@ function on_change_actuator()
 }
 
 window.onload = function () {
-
+    on_change_actuator();
 }

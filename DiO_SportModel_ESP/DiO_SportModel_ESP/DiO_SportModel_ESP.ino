@@ -64,6 +64,8 @@ SOFTWARE.
 
 #pragma endregion
 
+#define CAYENNE_LOG DEBUG_PORT
+
 #pragma region Variables
 
 /* @brief Application mode. */
@@ -202,32 +204,38 @@ void setup()
 	
 	int CounterL = 0;
 	int GestureL = Gestures::LongHold;
-	//for (;;)
-	//{
-	//	GestureL = ButtonGesture.check();
-	//	if (GestureL != Gestures::None)
-	//	{
-	//		break;
-	//	}
-	//	if (GestureL == Gestures::None)
-	//	{
-	//		if (CounterL >= NO_ACTION_TIME_OUT)
-	//		{
-	//			shutdown();
-	//		}
-	//		CounterL++;
-	//	}
-	//	ESP.wdtFeed();
-	//	delay(1);
-	//}
-
-	if (GestureL == Gestures::Hold)
+	for (int index = 0; index < 20; index++)
 	{
-		AppMode_g = ApplicationMode::NormalOperation;
+		Indications.setLed(0);
+		delay(100);
+		Indications.setLed(100);
+		delay(100);
+		
+		ESP.wdtFeed();
 	}
-	else if(GestureL == Gestures::LongHold)
+
+	for (;;)
 	{
-		AppMode_g = ApplicationMode::Configuriation;
+		if (digitalRead(PIN_BUTTON) == LOW)
+		{
+			if (CounterL >= 10)
+			{
+				AppMode_g = ApplicationMode::Configuriation;
+				Indications.setLed(100);
+				break;
+			}
+
+			CounterL++;
+		}
+		else
+		{
+			Indications.setLed(100);
+			AppMode_g = ApplicationMode::NormalOperation;
+			break;
+		}
+
+		ESP.wdtFeed();
+		delay(500);
 	}
 
 	if (AppMode_g == ApplicationMode::NormalOperation)
@@ -235,6 +243,23 @@ void setup()
 		Indications.playNormalOperationMode();
 
 		configure_to_sta();
+
+#ifdef ENABLE_CAYENNE_MODE
+
+		if (IsConnectedToInternet_g == true)
+		{
+			DEBUGLOG("CayenneUsername: %s\r\n", DeviceConfiguration.CayenneUsername.c_str());
+			DEBUGLOG("CayennePassword: %s\r\n", DeviceConfiguration.CayennePassword.c_str());
+			DEBUGLOG("CayenneClientID: %s\r\n", DeviceConfiguration.CayenneClientID.c_str());
+
+			Cayenne.begin(DeviceConfiguration.CayenneUsername.c_str(),
+				DeviceConfiguration.CayennePassword.c_str(),
+				DeviceConfiguration.CayenneClientID.c_str());
+
+			Cayenne.publishDeviceInfo();
+		}
+
+#endif // ENABLE_CAYENNE_MODE
 	}
 	else if (AppMode_g == ApplicationMode::Configuriation)
 	{
@@ -243,7 +268,7 @@ void setup()
 		configure_to_ap();
 		
 		LocalWebServer.configure(&SPIFFS);
-		LocalWebServer.setActuatorCallback(Actuator.setValue);
+		LocalWebServer.setActuatorCallback(set_actuator);
 	}
 }
 
@@ -252,12 +277,12 @@ void setup()
  */
 void loop()
 {
-	int GestureL = ButtonGesture.check();
+	//int GestureL = ButtonGesture.check();
 
-	if (GestureL == Gestures::LongHold)
-	{
-		shutdown();
-	}
+	//if (GestureL == Gestures::LongHold)
+	//{
+	//	shutdown();
+	//}
 
 	if (AppMode_g == ApplicationMode::NormalOperation)
 	{
@@ -318,7 +343,10 @@ void configure_file_system()
 	if (!SPIFFS.begin())
 	{
 		DEBUGLOG("Can not load file system.\r\n");
-		for (;;) {}
+		for (;;)
+		{
+			ESP.wdtFeed();
+		}
 	}
 
 #ifdef EANBLE_DEBUG_OUT
@@ -480,28 +508,13 @@ void handler_sta_mode_got_ip(WiFiEventStationModeGotIP evt)
 	DEBUGLOG(__PRETTY_FUNCTION__);
 	DEBUGLOG("\r\n");
 
-	DEBUGLOG("IP Address:      %s\r\n", WiFi.localIP().toString().c_str());
-	DEBUGLOG("Gateway:         %s\r\n", WiFi.gatewayIP().toString().c_str());
-	DEBUGLOG("DNS:             %s\r\n", WiFi.dnsIP().toString().c_str());
+	DEBUGLOG("IP Address: %s\r\n", WiFi.localIP().toString().c_str());
+	DEBUGLOG("Gateway:    %s\r\n", WiFi.gatewayIP().toString().c_str());
+	DEBUGLOG("DNS:        %s\r\n", WiFi.dnsIP().toString().c_str());
 
 	WiFiDisconnectedSince_g = 0;
 	IsConnectedToInternet_g = true;
 	Indications.playConnectedToInet();
-
-#ifdef ENABLE_CAYENNE_MODE
-
-	DEBUGLOG("CayenneUsername: %s\r\n", DeviceConfiguration.CayenneUsername.c_str());
-	DEBUGLOG("CayennePassword: %s\r\n", DeviceConfiguration.CayennePassword.c_str());
-	DEBUGLOG("CayenneClientID: %s\r\n", DeviceConfiguration.CayenneClientID.c_str());
-
-	Cayenne.begin(DeviceConfiguration.CayenneUsername.c_str(),
-		DeviceConfiguration.CayennePassword.c_str(),
-		DeviceConfiguration.CayenneClientID.c_str());
-
-	Cayenne.publishDeviceInfo();
-
-#endif // ENABLE_CAYENNE_MODE
-
 }
 
 /** @brief Handler that execute when the device is disconnected.
@@ -514,7 +527,8 @@ void handler_sta_mode_disconnected(WiFiEventStationModeDisconnected evt)
 	DEBUGLOG(__PRETTY_FUNCTION__);
 	DEBUGLOG("\r\n");
 
-	if (WiFiDisconnectedSince_g == 0) {
+	if (WiFiDisconnectedSince_g == 0)
+	{
 		WiFiDisconnectedSince_g = millis();
 	}
 
@@ -541,6 +555,11 @@ void shutdown()
 
 	Indications.playShutdown();
 	ESP.deepSleep(40000);
+}
+
+void set_actuator(uint8 value)
+{
+	Actuator.setValue(value);
 }
 
 #pragma region OTA Updates

@@ -6,6 +6,10 @@
 
 void ActuatorClass::configure()
 {
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
 	// Config PWM Range.
 	analogWriteRange(PWM_RANGE);
 
@@ -18,6 +22,10 @@ void ActuatorClass::configure()
 
 void ActuatorClass::setValue(uint8 value)
 {
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
 	// Shutdown the actuator.
 	analogWrite(PIN_ACTUATOR, value);
 }
