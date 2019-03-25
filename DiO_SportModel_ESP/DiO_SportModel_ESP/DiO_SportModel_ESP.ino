@@ -310,7 +310,11 @@ void loop()
 	}
 	else if (AppMode_g == ApplicationMode::Configuriation)
 	{
-		LocalWebServer.handle();
+#ifdef ENABLE_OTA_ARDUINO
+
+		UpdateManager.runLocalOTA();
+
+#endif // ENABLE_OTA_ARDUINO
 	}
 }
 

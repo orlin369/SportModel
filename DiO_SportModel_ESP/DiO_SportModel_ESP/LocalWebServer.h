@@ -44,12 +44,6 @@ SOFTWARE.
 #include <ArduinoJson.h>
 #include <StreamString.h>
 
-#ifdef ENABLE_OTA_ARDUINO
-
-#include <ArduinoOTA.h>
-
-#endif // ENABLE_OTA_ARDUINO
-
 #include "ApplicationConfiguration.h"
 
 #include "DebugPort.h"
@@ -227,11 +221,6 @@ class LocalWebServerClass : public AsyncWebServer
 	  *  @return Void
 	  */
 	 void configure(FS* fs);
-
-	 /** @brief Handle OTA process.
-	  *  @return Void.
-	  */
-	 void handle();
 
 	 /** @brief Set actuator callback. Part of the API.
       *  @param callback, Actuator set function.

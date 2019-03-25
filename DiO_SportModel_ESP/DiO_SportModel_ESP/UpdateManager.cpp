@@ -98,5 +98,67 @@ void  UpdateManagerClass::checkForUpdates()
 }
 
 
+#ifdef ENABLE_OTA_ARDUINO
+
+/** @brief Configure OTA.
+ *  @param password String, Password for flashing.
+ *  @return Void.
+ */
+void UpdateManagerClass::setLocalOTA(String password) {
+	DEBUGLOG("\r\n");
+	DEBUGLOG(__PRETTY_FUNCTION__);
+	DEBUGLOG("\r\n");
+
+	// Port defaults to 8266
+	// ArduinoOTA.setPort(8266);
+
+	// Set host name.
+	ArduinoOTA.setHostname(DeviceConfiguration.DeviceName.c_str());
+
+	// No authentication by default
+	if (password != "")
+	{
+		ArduinoOTA.setPassword(password.c_str());
+		DEBUGLOG("OTA: password set %s\r\n", password.c_str());
+	}
+
+	ArduinoOTA.onStart([]() {
+		DEBUGLOG("OTA: Start\r\n");
+	});
+
+	ArduinoOTA.onEnd([]() {
+		Serial.println("\r\nOTA: End");
+	});
+
+	ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
+		DEBUGLOG("OTA: Progress %u%%\r\n", (progress / (total / 100)));
+	});
+
+	ArduinoOTA.onError([](ota_error_t error) {
+		DEBUGLOG("OTA: Error[%u]: ", error);
+		if (error == OTA_AUTH_ERROR) DEBUGLOG("Authentication Failed\r\n");
+		else if (error == OTA_BEGIN_ERROR) DEBUGLOG("Begin Failed\r\n");
+		else if (error == OTA_CONNECT_ERROR) DEBUGLOG("Connect Failed\r\n");
+		else if (error == OTA_RECEIVE_ERROR) DEBUGLOG("Receive Failed\r\n");
+		else if (error == OTA_END_ERROR) DEBUGLOG("End Failed\r\n");
+	});
+
+	DEBUGLOG("OTA: Ready\r\n");
+
+	ArduinoOTA.begin();
+}
+
+/** @brief Handle OTA process.
+ *  @return Void.
+ */
+void UpdateManagerClass::runLocalOTA()
+{
+	ArduinoOTA.handle();
+}
+
+
+#endif // ENABLE_OTA_ARDUINO
+
+
 UpdateManagerClass UpdateManager;
 

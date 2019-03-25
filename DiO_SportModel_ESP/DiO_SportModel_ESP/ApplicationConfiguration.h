@@ -45,7 +45,7 @@ SOFTWARE.
 
 #define ENABLE_WEB_EDITOR
 
-//#define ENABLE_OTA_ARDUINO
+#define ENABLE_OTA_ARDUINO
 
 #define ENABLE_WEB_OTA
 
@@ -155,7 +155,6 @@ SOFTWARE.
 #define VERSION_SERVER_PATH "api/v1/sport_model/fota/version"
 
 #pragma endregion
-
 
 #endif
 

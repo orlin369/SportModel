@@ -39,6 +39,8 @@ SOFTWARE.
 
 #include "GeneralHelper.h"
 
+#include "DeviceConfiguration.h"
+
 #include <ESP8266WiFi.h>
 
 #include <WiFiClient.h>
@@ -46,6 +48,12 @@ SOFTWARE.
 #include <ESP8266HTTPClient.h>
 
 #include <ESP8266httpUpdate.h>
+
+#ifdef ENABLE_OTA_ARDUINO
+
+#include <ArduinoOTA.h>
+
+#endif // ENABLE_OTA_ARDUINO
 
 class UpdateManagerClass
 {
@@ -57,6 +65,16 @@ class UpdateManagerClass
 	  */
 	 void checkForUpdates();
 
+	 /** @brief Configure OTA.
+	  *  @param password String, Password for flashing.
+	  *  @return Void.
+	  */
+	 void setLocalOTA(String password);
+
+	 /** @brief Handle OTA process.
+	  *  @return Void.
+	  */
+	 void runLocalOTA();
 };
 
 extern UpdateManagerClass UpdateManager;
