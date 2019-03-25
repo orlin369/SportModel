@@ -25,6 +25,7 @@ SOFTWARE.
 #pragma region Headres
 
 // Aditional functionalities.
+#include "UpdateManager.h"
 #include "Actuator.h"
 #include "ApplicationConfiguration.h"
 #include "DebugPort.h"
@@ -199,8 +200,8 @@ void setup()
 		set_default_device_configuration(&SPIFFS);
 	}
 
-	ButtonGesture.configure();
 	Indications.configure();
+	ButtonGesture.configure();
 	
 	int CounterL = 0;
 	int GestureL = Gestures::LongHold;
@@ -243,6 +244,12 @@ void setup()
 		Indications.playNormalOperationMode();
 
 		configure_to_sta();
+
+#ifdef ENABLE_SELF_OTA
+		
+		UpdateManager.checkForUpdates();
+
+#endif // ENABLE_SELF_OTA
 
 #ifdef ENABLE_CAYENNE_MODE
 

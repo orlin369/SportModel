@@ -146,7 +146,7 @@ SOFTWARE.
 
 #pragma region OTA Updates
 
-#define SERVER_DOMAIN "http://sport.mode.com"
+#define SERVER_DOMAIN "http://sport.mode.com/"
 
 /** @brief Updatest root endpoint. */
 #define UPDATE_SERVER_PATH "api/v1/sport_model/fota/update"
