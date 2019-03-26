@@ -2,7 +2,7 @@ language: c
 before_install:
 - source <(curl -SLs https://raw.githubusercontent.com/littleyoda/ESP8266-Environment-for-Travis-CI/master/install.sh)
 install:
-- arduino --install-library "Adafruit MCP23017 Arduino Library,LinkedList,ArduinoJson,CayenneLPP,CayenneMQTT,IRRemoteESP8266,ModbusMaster,WiFiManager"
+- arduino --install-library "ArduinoJson,CayenneLPP,CayenneMQTT,IRRemoteESP8266"
 script:
 - replaceStringWithGitHubTag $HOME/build/orlin369/SportModel/SportModel/Consts.h "{NONGITVERSION}" $HOME/build/orlin369/SportModel/
 - build $HOME/build/build/orlin369/SportModel/SportModel.ino nodemcuv2
