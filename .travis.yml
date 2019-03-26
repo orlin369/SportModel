@@ -2,7 +2,7 @@ language: c
 before_install:
 - source <(curl -SLs https://raw.githubusercontent.com/littleyoda/ESP8266-Environment-for-Travis-CI/master/install.sh)
 install:
-- arduino --install-library "ArduinoJson,CayenneLPP,CayenneMQTT,IRRemoteESP8266"
+- arduino --install-library "ArduinoJson,CayenneLPP,CayenneMQTT"
 script:
 - replaceStringWithGitHubTag $HOME/build/orlin369/SportModel/SportModel/Consts.h "{NONGITVERSION}" $HOME/build/orlin369/SportModel/
 - build $HOME/build/build/orlin369/SportModel/SportModel.ino nodemcuv2
