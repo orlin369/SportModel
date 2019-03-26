@@ -246,8 +246,12 @@ void setup()
 		configure_to_sta();
 
 #ifdef ENABLE_SELF_OTA
-		
-		UpdateManager.checkForUpdates();
+
+		if (IsConnectedToInternet_g == true)
+		{
+			DEBUGLOG("Checking for update.\r\n");
+			UpdateManager.checkForUpdates();
+		}
 
 #endif // ENABLE_SELF_OTA
 
@@ -267,6 +271,7 @@ void setup()
 		}
 
 #endif // ENABLE_CAYENNE_MODE
+
 	}
 	else if (AppMode_g == ApplicationMode::Configuriation)
 	{
@@ -276,6 +281,13 @@ void setup()
 		
 		LocalWebServer.configure(&SPIFFS);
 		LocalWebServer.setActuatorCallback(set_actuator);
+
+#ifdef ENABLE_OTA_ARDUINO
+
+		UpdateManager.setLocalOTA(DeviceConfiguration.DeviceName, DeviceConfiguration.HTTPPassword);
+
+#endif // ENABLE_OTA_ARDUINO
+
 	}
 }
 
@@ -564,8 +576,9 @@ void shutdown()
 	DEBUGLOG(__PRETTY_FUNCTION__);
 	DEBUGLOG("\r\n");
 
+	set_actuator(0);
 	Indications.playShutdown();
-	ESP.deepSleep(40000);
+	ESP.deepSleep(0);
 }
 
 void set_actuator(uint8 value)

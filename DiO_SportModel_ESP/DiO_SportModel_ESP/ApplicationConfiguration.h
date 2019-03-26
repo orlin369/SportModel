@@ -65,9 +65,9 @@ SOFTWARE.
 
 #define PIN_ACTUATOR D3 // ModeMCU - D3
 
-#define PWM_FREQ 800
+#define PWM_FREQ 800 // [Hz]
 
-#define PWM_RANGE 100
+#define PWM_RANGE 100 // [Scale]
 
 #pragma endregion
 
@@ -140,11 +140,11 @@ SOFTWARE.
 
 #define NO_ACTION_TIME_OUT 5000
 
-#define DISCONNECTED_SECONDS 60
+#define DISCONNECTED_SECONDS 15
 
 #pragma endregion
 
-#pragma region OTA Updates
+#pragma region Self OTA
 
 #define SERVER_DOMAIN "http://sport.mode.com/"
 

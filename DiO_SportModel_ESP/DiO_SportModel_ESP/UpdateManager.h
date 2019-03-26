@@ -69,7 +69,7 @@ class UpdateManagerClass
 	  *  @param password String, Password for flashing.
 	  *  @return Void.
 	  */
-	 void setLocalOTA(String password);
+	 void setLocalOTA(String hostname, String password = "");
 
 	 /** @brief Handle OTA process.
 	  *  @return Void.

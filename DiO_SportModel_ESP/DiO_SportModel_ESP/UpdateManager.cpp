@@ -24,6 +24,8 @@ SOFTWARE.
 
 #include "UpdateManager.h"
 
+#ifdef ENABLE_SELF_OTA
+
 /** @brief Check for self update,
  *         and if there is, just run it.
  *  @return Void.
@@ -97,6 +99,7 @@ void  UpdateManagerClass::checkForUpdates()
 	HttpClientL.end();
 }
 
+#endif // ENABLE_SELF_OTA
 
 #ifdef ENABLE_OTA_ARDUINO
 
@@ -104,7 +107,7 @@ void  UpdateManagerClass::checkForUpdates()
  *  @param password String, Password for flashing.
  *  @return Void.
  */
-void UpdateManagerClass::setLocalOTA(String password) {
+void UpdateManagerClass::setLocalOTA(String hostname, String password) {
 	DEBUGLOG("\r\n");
 	DEBUGLOG(__PRETTY_FUNCTION__);
 	DEBUGLOG("\r\n");
@@ -113,7 +116,7 @@ void UpdateManagerClass::setLocalOTA(String password) {
 	// ArduinoOTA.setPort(8266);
 
 	// Set host name.
-	ArduinoOTA.setHostname(DeviceConfiguration.DeviceName.c_str());
+	ArduinoOTA.setHostname(hostname.c_str());
 
 	// No authentication by default
 	if (password != "")

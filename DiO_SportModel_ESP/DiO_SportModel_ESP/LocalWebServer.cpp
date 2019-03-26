@@ -61,12 +61,6 @@ void LocalWebServerClass::configure(FS* fs)
 	// Configure DNS.
 	MDNS.begin(DeviceConfiguration.DeviceName.c_str());
 	MDNS.addService("http", "tcp", PORT_HTTP);
-
-#ifdef ENABLE_OTA_ARDUINO
-
-	configureOTA(DeviceConfiguration.HTTPPassword.c_str());
-
-#endif // ENABLE_OTA_ARDUINO
 }
 
 /** @brief Decode URL unification. Based on https://code.google.com/p/avr-netino/
